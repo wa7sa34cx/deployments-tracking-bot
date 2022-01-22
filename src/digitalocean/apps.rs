@@ -20,34 +20,45 @@ pub struct JsonResponse {
     apps: Vec<JsonApp>
 }
 
+#[derive(Deserialize)]
+pub struct JsonApp {
+    pub id: String,
+}
+
 impl DigitalOcean {
     /// Gets list of apps
-    pub fn get_apps(&self) -> Vec<App> {
-        vec![App {
-            internal: "1".to_string(),
-        },
-        App {
-            internal: "2".to_string(),
-        }]
+    pub async fn get_apps(&self) -> anyhow::Result<JsonResponse> {
+        let json_apps = self.client
+          .get("https://discord.com/api/users/@me")
+          .header(
+              header::AUTHORIZATION,
+              &format!("Bearer {}", self.token),
+          )
+          .send()
+          .await?
+          .json::<JsonResponse>()
+          .await?;
+
+        Ok(json_apps)
     }
 }
 
 
 // Gets list all Apps
-async fn get_user_data(
-    access_token: impl Into<String>,
-    client: &Client,
-) -> anyhow::Result<UserData> {
-    let user_data = client
-        .get("https://discord.com/api/users/@me")
-        .header(
-            header::AUTHORIZATION,
-            &format!("Bearer {}", access_token.into()),
-        )
-        .send()
-        .await?
-        .json::<UserData>()
-        .await?;
+// async fn get_user_data(
+//     access_token: impl Into<String>,
+//     client: &Client,
+// ) -> anyhow::Result<UserData> {
+//     let user_data = client
+//         .get("https://discord.com/api/users/@me")
+//         .header(
+//             header::AUTHORIZATION,
+//             &format!("Bearer {}", access_token.into()),
+//         )
+//         .send()
+//         .await?
+//         .json::<UserData>()
+//         .await?;
 
-    Ok(user_data)
-}
+//     Ok(user_data)
+// }
