@@ -6,6 +6,7 @@ use serde_derive::*;
 
 use crate::digitalocean::DigitalOcean;
 
+/// Full info about the app
 #[derive(Debug)]
 pub struct App {
     pub id: String,
@@ -15,12 +16,12 @@ pub struct App {
 }
 
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/list_apps
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct JsonResponse {
     apps: Vec<JsonApp>
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct JsonApp {
     pub id: String,
 }
