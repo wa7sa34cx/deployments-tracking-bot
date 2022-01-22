@@ -1,3 +1,5 @@
+//! Module for getting a list of all deployments of the app
+
 use crate::digitalocean::DigitalOcean;
 
 #[derive(Debug)]
