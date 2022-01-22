@@ -1,6 +1,6 @@
 [package]
-name = "digitalocean-api-rust"
-version = "0.1.0"
+name = "telegram-devops-bot"
+version = "0.1.1"
 edition = "2021"
 
 [dependencies]
