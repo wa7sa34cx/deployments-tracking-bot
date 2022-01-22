@@ -10,8 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `digitalocean` initial module
-- [`dotenv`](https://crates.io/crates/dotenv) crate dependency
-- [`reqwest`](https://crates.io/crates/reqwest) crate dependency
+- `telegram` empty module
+- `logging` module
+- `anyhow` crate dependency
+- `chrono` crate dependency
+- `dotenv` crate dependency
+- `reqwest` crate dependency
+- `serde` crate dependency
+- `serde_derive` crate dependency
+- `log` crate dependency
+- `simplelog` crate dependency
+- `tokio` crate dependency
+- README.md
 
 ## 0.1.0 - 2022-01-21
 
