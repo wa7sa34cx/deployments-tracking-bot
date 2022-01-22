@@ -1,6 +1,5 @@
 pub mod apps;
 pub mod auth;
-pub mod deployments;
 
 use reqwest::Client;
 
