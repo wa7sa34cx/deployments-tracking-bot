@@ -15,13 +15,17 @@ fn main() {
     //     println!("For {} instances polling can be every {} secs", i, interval);
     // } 
 
-    // let rate_limit: u16 = 5000;
-    // let calc = rate_limit / 60 / 4;
-    // println!("{}", calc);
 
-    let digitalocean = DigitalOcean::auth(token);
-    let deployments = digitalocean.deployments("x123");
-    println!("{:?}", deployments);
+
+    // Create keep-alive HTTP connection pool
+    let client = reqwest::Client::new();
+
+    let digitalocean = DigitalOcean::auth(token, client);
+    // let deployments = digitalocean.deployments("x123");
+    // println!("{:?}", deployments);
+
+    let apps = digitalocean.apps();
+    println!("{:?}", apps);
 }
 
 // Polling every n secs
