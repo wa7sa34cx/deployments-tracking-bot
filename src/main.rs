@@ -3,7 +3,7 @@ mod logging;
 
 use digitalocean::DigitalOcean;
 
-fn main() {
+async fn main() {
     // Load environment variables from .env
     dotenv::dotenv().ok();
 
@@ -29,7 +29,7 @@ fn main() {
     // let deployments = digitalocean.deployments("x123");
     // println!("{:?}", deployments);
 
-    let apps = digitalocean.get_apps();
+    let apps = digitalocean.get_apps().await;
     println!("{:?}", apps);
 }
 
