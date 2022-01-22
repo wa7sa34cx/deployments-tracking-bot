@@ -3,6 +3,12 @@
 version = 3
 
 [[package]]
+name = "anyhow"
+version = "1.0.53"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "94a45b455c14666b85fc40a019e8ab9eb75e3a124e05494f5397122bc9eb06e0"
+
+[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -609,6 +615,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "96b3c34c1690edf8174f5b289a336ab03f568a4460d8c6df75f2f3a692b3bc6a"
 
 [[package]]
+name = "serde_derive"
+version = "1.0.134"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "784ed1fbfa13fe191077537b0d70ec8ad1e903cfe04831da608aa36457cb653d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "serde_json"
 version = "1.0.76"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -673,10 +690,13 @@ dependencies = [
 name = "telegram-devops-bot"
 version = "0.1.1"
 dependencies = [
+ "anyhow",
  "chrono",
  "dotenv",
  "log",
  "reqwest",
+ "serde",
+ "serde_derive",
  "simplelog",
 ]
 
