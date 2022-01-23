@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.1.2 - 2022-01-23
 
+### Added
+
+- Handling an error response from the DigitalOcean API
+
 ### Changed
 
 - Entire algorithm
