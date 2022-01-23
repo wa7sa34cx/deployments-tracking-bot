@@ -1,10 +1,11 @@
-//! Module for retrieving list of all applications in the account with last deployment.
+//! Retrieving list of all applications in the account.
 
 use reqwest::header;
 use serde_derive::*;
 
 use crate::digitalocean::DigitalOcean;
 
+/// App info
 #[derive(Debug)]
 pub struct App {
     pub id: String,
@@ -31,9 +32,9 @@ pub struct Spec {
 impl DigitalOcean {
     /// Gets list of apps
     pub async fn get_apps(&self) -> anyhow::Result<Vec<App>> {
-        let json_res = self.get_json_res().await?;
+        let json = self.get_json().await?;
 
-        let apps: Vec<App> = json_res
+        let apps: Vec<App> = json
             .apps
             .into_iter()
             .map(|json_app| App {
@@ -45,8 +46,9 @@ impl DigitalOcean {
         Ok(apps)
     }
 
-    async fn get_json_res(&self) -> anyhow::Result<JsonResponse> {
-        let json_res = self
+    // Gets json data from DigitalOcean API
+    async fn get_json(&self) -> anyhow::Result<JsonResponse> {
+        let json = self
             .client
             .get("https://api.digitalocean.com/v2/apps")
             .header(header::CONTENT_TYPE, "application/json")
@@ -56,6 +58,6 @@ impl DigitalOcean {
             .json::<JsonResponse>()
             .await?;
 
-        Ok(json_res)
+        Ok(json)
     }
 }

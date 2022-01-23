@@ -1,4 +1,4 @@
-//! Module for authentication with OAuth
+//! Authenticating with OAuth.
 
 use reqwest::Client;
 
