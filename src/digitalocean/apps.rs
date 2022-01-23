@@ -3,7 +3,7 @@
 use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
 
-use crate::digitalocean::{DigitalOcean, error::ErrorResponse};
+use crate::digitalocean::{error::ErrorResponse, DigitalOcean};
 
 /// App info
 #[derive(Debug)]
@@ -35,11 +35,12 @@ impl DigitalOcean {
         let json = self.get_json().await?;
 
         if json.apps.is_none() {
-            return Err(anyhow::anyhow!("There are no applications in the account."));
+            return Err(anyhow::anyhow!("there are no applications in the account"));
         }
 
         let apps: Vec<App> = json
-            .apps.unwrap()
+            .apps
+            .unwrap()
             .into_iter()
             .filter(|j| j.id.is_some())
             .map(|j| App {
@@ -47,6 +48,10 @@ impl DigitalOcean {
                 name: j.spec.name,
             })
             .collect();
+
+        if apps.len() == 0 {
+            return Err(anyhow::anyhow!("there are no applications with id"));
+        }
 
         Ok(apps)
     }
@@ -63,7 +68,7 @@ impl DigitalOcean {
 
         if res.status() != StatusCode::OK {
             let json = res.json::<ErrorResponse>().await?;
-            return Err(anyhow::anyhow!(json.message));
+            return Err(anyhow::anyhow!(json.error()));
         }
 
         let json = res.json::<JsonResponse>().await?;
