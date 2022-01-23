@@ -1,6 +1,6 @@
 //! Retrieving list of all applications in the account.
 
-use reqwest::header;
+use reqwest::{header, StatusCode};
 use serde_derive::*;
 
 use crate::digitalocean::DigitalOcean;
@@ -29,6 +29,12 @@ pub struct Spec {
     pub name: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct ErrorResponse {
+    pub id: String,
+    pub message: String,
+}
+
 impl DigitalOcean {
     /// Gets list of apps
     pub async fn get_apps(&self) -> anyhow::Result<Vec<App>> {
@@ -48,15 +54,22 @@ impl DigitalOcean {
 
     // Gets json data from DigitalOcean API
     async fn get_json(&self) -> anyhow::Result<JsonResponse> {
-        let json = self
+        let res = self
             .client
             .get("https://api.digitalocean.com/v2/apps")
             .header(header::CONTENT_TYPE, "application/json")
             .header(header::AUTHORIZATION, &format!("Bearer {}", self.token))
             .send()
-            .await?
-            .json::<JsonResponse>()
             .await?;
+        // .json::<JsonResponse>()
+        // .await?;
+
+        if res.status() != StatusCode::OK {
+            let json = res.json::<ErrorResponse>().await?;
+            return Err(anyhow::anyhow!(json.message));
+        }
+
+        let json = res.json::<JsonResponse>().await?;
 
         Ok(json)
     }
