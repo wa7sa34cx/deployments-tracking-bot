@@ -55,8 +55,6 @@ impl DigitalOcean {
             .header(header::AUTHORIZATION, &format!("Bearer {}", self.token))
             .send()
             .await?;
-        // .json::<JsonResponse>()
-        // .await?;
 
         if res.status() != StatusCode::OK {
             let json = res.json::<ErrorResponse>().await?;
