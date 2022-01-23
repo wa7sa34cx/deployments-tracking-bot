@@ -32,10 +32,12 @@ pub struct Spec {
 impl DigitalOcean {
     /// Gets list of apps
     pub async fn get_apps(&self) -> anyhow::Result<Vec<App>> {
-        let json = self.get_json().await?;
+        let json = get_json(self).await?;
 
         if json.apps.is_none() {
-            return Err(anyhow::anyhow!("there are no applications in the account 🤷‍♂️"));
+            return Err(anyhow::anyhow!(
+                "there are no applications in the account 🤷‍♂️"
+            ));
         }
 
         let apps: Vec<App> = json
@@ -55,24 +57,27 @@ impl DigitalOcean {
 
         Ok(apps)
     }
+}
 
-    // Gets json data from DigitalOcean API
-    async fn get_json(&self) -> anyhow::Result<JsonResponse> {
-        let res = self
-            .client
-            .get("https://api.digitalocean.com/v2/apps")
-            .header(header::CONTENT_TYPE, "application/json")
-            .header(header::AUTHORIZATION, &format!("Bearer {}", self.token))
-            .send()
-            .await?;
+// Gets json data from DigitalOcean API
+async fn get_json(digitalocean: &DigitalOcean) -> anyhow::Result<JsonResponse> {
+    let res = digitalocean
+        .client
+        .get("https://api.digitalocean.com/v2/apps")
+        .header(header::CONTENT_TYPE, "application/json")
+        .header(
+            header::AUTHORIZATION,
+            &format!("Bearer {}", digitalocean.token),
+        )
+        .send()
+        .await?;
 
-        if res.status() != StatusCode::OK {
-            let json = res.json::<ErrorResponse>().await?;
-            return Err(anyhow::anyhow!(json.error()));
-        }
-
-        let json = res.json::<JsonResponse>().await?;
-
-        Ok(json)
+    if res.status() != StatusCode::OK {
+        let json = res.json::<ErrorResponse>().await?;
+        return Err(anyhow::anyhow!(json.error()));
     }
+
+    let json = res.json::<JsonResponse>().await?;
+
+    Ok(json)
 }
