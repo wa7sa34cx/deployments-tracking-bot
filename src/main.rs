@@ -35,7 +35,7 @@ async fn main() {
     println!("{:#?}", apps);
 
     // Deployments
-    let deployments = digitalocean.get_deployments(&apps[0]).await.unwrap();
+    let deployments = digitalocean.get_deployments(&apps[3]).await.unwrap();
 
     println!("{:#?}", deployments);
 }
