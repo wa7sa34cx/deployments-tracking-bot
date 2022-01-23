@@ -57,10 +57,7 @@ pub struct Reason {
 }
 
 impl DigitalOcean {
-    pub async fn get_deployments(
-        &self,
-        app: &App,
-    ) -> anyhow::Result<Vec<JsonDeployment>> {
+    pub async fn get_deployments(&self, app: &App) -> anyhow::Result<Vec<JsonDeployment>> {
         let json = get_json(self, app).await?;
 
         if json.deployments.is_none() {
@@ -69,26 +66,23 @@ impl DigitalOcean {
             ));
         }
 
-        let deployments = json
+        let deployments: Vec<JsonDeployment> = json
             .deployments
             .unwrap()
             .into_iter()
             .filter(|d| d.id.is_some() && d.phase.is_some())
-            .filter(|d| match d.phase.unwrap() {
+            .filter(|d| match d.phase.as_ref().unwrap() {
                 Phase::Active | Phase::Superseded | Phase::Error | Phase::Canceled => true,
                 _ => false,
             })
             .collect();
 
-        Ok(json.deployments.unwrap())
+        Ok(deployments)
     }
 }
 
 // Gets json data from DigitalOcean API
-async fn get_json(
-    digitalocean: &DigitalOcean,
-    app: &App,
-) -> anyhow::Result<JsonResponse> {
+async fn get_json(digitalocean: &DigitalOcean, app: &App) -> anyhow::Result<JsonResponse> {
     let res = digitalocean
         .client
         .get(&format!(
