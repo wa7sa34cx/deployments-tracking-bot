@@ -11,22 +11,15 @@ async fn main() {
     // Initialize logging
     logging::init();
 
+    // Get token from environment
     let token = dotenv::var("DO_TOKEN").unwrap();
-    // println!("{}", token);
-
-    // let rate_limit = dotenv::var("DO_RATE_LIMIT").unwrap().parse::<u16>().unwrap();
-
-    // for i in 1..=20 {
-    //     let interval = calculate_polling_interval(rate_limit, i);
-    //     println!("For {} instances polling can be every {} secs", i, interval);
-    // } 
-
-
 
     // Create keep-alive HTTP connection pool
     let client = reqwest::Client::new();
 
+    // Create DigitalOcean instance
     let digitalocean = DigitalOcean::auth(token, client);
+    // println!("{:?}", digitalocean);
     // let deployments = digitalocean.deployments("x123");
     // println!("{:?}", deployments);
 

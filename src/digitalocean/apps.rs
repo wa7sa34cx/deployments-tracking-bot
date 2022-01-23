@@ -1,7 +1,7 @@
 //! Module for retrieving list of all applications in the account with last deployment.
 
 use chrono::NaiveDateTime;
-use reqwest::header;
+use reqwest::{header, StatusCode};
 use serde_derive::*;
 
 use crate::digitalocean::DigitalOcean;
@@ -18,7 +18,7 @@ pub struct App {
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/list_apps
 #[derive(Debug, Deserialize)]
 pub struct JsonResponse {
-    apps: Vec<JsonApp>
+    apps: Vec<JsonApp>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -29,21 +29,20 @@ pub struct JsonApp {
 impl DigitalOcean {
     /// Gets list of apps
     pub async fn get_apps(&self) -> anyhow::Result<JsonResponse> {
-        let json_apps = self.client
-          .get("https://discord.com/api/users/@me")
-          .header(
-              header::AUTHORIZATION,
-              &format!("Bearer {}", self.token),
-          )
-          .send()
-          .await?
-          .json::<JsonResponse>()
-          .await?;
+        let json_res = self
+            .client
+            .get("https://api.digitalocean.com/v2/apps")
+            .header(header::CONTENT_TYPE, "application/json")
+            .header(header::AUTHORIZATION, &format!("Bearer {}", self.token))
+            .send()
+            .await?
+            .json::<JsonResponse>()
+            .await?;
 
-        Ok(json_apps)
+
+        Ok(json_res)
     }
 }
-
 
 // Gets list all Apps
 // async fn get_user_data(

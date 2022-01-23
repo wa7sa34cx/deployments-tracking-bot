@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `log` crate dependency
 - `simplelog` crate dependency
 - `tokio` crate dependency
+- CHANGELOG.md
 - README.md
 
 ## 0.1.0 - 2022-01-21
