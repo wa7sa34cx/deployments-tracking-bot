@@ -35,7 +35,7 @@ impl DigitalOcean {
         let json = self.get_json().await?;
 
         if json.apps.is_none() {
-            return Err(anyhow::anyhow!("there are no applications in the account"));
+            return Err(anyhow::anyhow!("there are no applications in the account 🤷‍♂️"));
         }
 
         let apps: Vec<App> = json
@@ -50,7 +50,7 @@ impl DigitalOcean {
             .collect();
 
         if apps.len() == 0 {
-            return Err(anyhow::anyhow!("there are no applications with id"));
+            return Err(anyhow::anyhow!("there are no applications with id 🤷‍♂️"));
         }
 
         Ok(apps)
