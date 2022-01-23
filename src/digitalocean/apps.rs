@@ -1,4 +1,4 @@
-//! Retrieving list of all applications in the account.
+//! Retrieving a list of all applications in the account.
 
 use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
@@ -15,12 +15,12 @@ pub struct App {
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/list_apps
 #[derive(Debug, Deserialize)]
 pub struct JsonResponse {
-    pub apps: Vec<JsonApp>,
+    pub apps: Option<Vec<JsonApp>>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct JsonApp {
-    pub id: String,
+    pub id: Option<String>,
     pub spec: Spec,
 }
 
@@ -34,12 +34,17 @@ impl DigitalOcean {
     pub async fn get_apps(&self) -> anyhow::Result<Vec<App>> {
         let json = self.get_json().await?;
 
+        if json.apps.is_none() {
+            return Err(anyhow::anyhow!("There are no applications in the account."));
+        }
+
         let apps: Vec<App> = json
-            .apps
+            .apps.unwrap()
             .into_iter()
-            .map(|json_app| App {
-                id: json_app.id,
-                name: json_app.spec.name,
+            .filter(|j| j.id.is_some())
+            .map(|j| App {
+                id: j.id.unwrap(),
+                name: j.spec.name,
             })
             .collect();
 
