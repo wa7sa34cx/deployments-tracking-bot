@@ -23,8 +23,15 @@ async fn main() {
     // let deployments = digitalocean.deployments("x123");
     // println!("{:?}", deployments);
 
-    // !!!! Panic!!!
-    let apps = digitalocean.get_apps().await.unwrap();
+    // Don't panic!
+    let apps = match digitalocean.get_apps().await {
+        Ok(apps) => apps,
+        Err(e) => {
+            log::error!("{}", e);
+            return;
+        }
+    };
+
     println!("{:#?}", apps);
 }
 

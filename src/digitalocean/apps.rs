@@ -1,9 +1,9 @@
 //! Retrieving list of all applications in the account.
 
 use reqwest::{header, StatusCode};
-use serde_derive::*;
+use serde_derive::Deserialize;
 
-use crate::digitalocean::DigitalOcean;
+use crate::digitalocean::{DigitalOcean, error::ErrorResponse};
 
 /// App info
 #[derive(Debug)]
@@ -27,12 +27,6 @@ pub struct JsonApp {
 #[derive(Debug, Deserialize)]
 pub struct Spec {
     pub name: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ErrorResponse {
-    pub id: String,
-    pub message: String,
 }
 
 impl DigitalOcean {
