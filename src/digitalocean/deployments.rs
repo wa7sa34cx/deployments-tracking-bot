@@ -1,15 +1,18 @@
-//! Module for getting a list of all deployments of the app
+//! Retrieving a list of all deployments of an app.
 
-use crate::digitalocean::DigitalOcean;
+use reqwest::{header, StatusCode};
+use serde_derive::Deserialize;
 
-// https://docs.digitalocean.com/reference/api/api-reference/#operation/list_apps
+use crate::digitalocean::{DigitalOcean, error::ErrorResponse};
+
+// https://docs.digitalocean.com/reference/api/api-reference/#operation/list_deployments
 #[derive(Debug, Deserialize)]
 pub struct JsonResponse {
-    pub apps: Vec<JsonApp>,
+    pub deployments: Vec<Deployment>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct JsonApp {
+pub struct Deployment {
     pub id: String,
     pub spec: Spec,
     pub created_at: DateTime<Utc>,
