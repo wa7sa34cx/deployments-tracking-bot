@@ -25,10 +25,10 @@ async fn main() {
 
     // !!!! Panic!!!
     let apps = digitalocean.get_apps().await.unwrap();
-    println!("{:?}", apps);
+    println!("{:#?}", apps);
 }
 
 // Polling every n secs
-// fn _calculate_polling_interval(rate_limit: u16, apps_num: u16) -> u16 {
-//     60 / (rate_limit  / 60 / apps_num) + 5
-// }
+fn _calculate_gap(rate_limit: u16, apps_num: u16) -> u16 {
+    60 / (rate_limit / 60 / (apps_num + 1)) + 5
+}

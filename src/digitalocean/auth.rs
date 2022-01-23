@@ -1,7 +1,8 @@
 //! Module for authentication with OAuth
 
-use crate::digitalocean::DigitalOcean;
 use reqwest::Client;
+
+use crate::digitalocean::DigitalOcean;
 
 impl DigitalOcean {
     /// Creates new instance with token and client
