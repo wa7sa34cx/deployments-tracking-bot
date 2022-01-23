@@ -23,7 +23,7 @@ async fn main() {
     // let deployments = digitalocean.deployments("x123");
     // println!("{:?}", deployments);
 
-    // Don't panic!
+    // Apps
     let apps = match digitalocean.get_apps().await {
         Ok(apps) => apps,
         Err(e) => {
@@ -33,6 +33,14 @@ async fn main() {
     };
 
     println!("{:#?}", apps);
+
+    // Deployments
+    let deployments = digitalocean
+        .get_deployments(&apps[0])
+        .await
+        .unwrap();
+
+    println!("{:#?}", deployments);
 }
 
 // Polling every n secs
