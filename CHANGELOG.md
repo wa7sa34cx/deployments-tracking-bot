@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Entire algorithm
+- `digitalocean` module
 
 ## 0.1.1 - 2022-01-22
 
