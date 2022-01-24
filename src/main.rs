@@ -1,7 +1,7 @@
 //! Main module
 
 use database::Database;
-// use digitalocean::DigitalOcean;
+use digitalocean::DigitalOcean;
 
 mod database;
 mod digitalocean;
@@ -15,25 +15,25 @@ async fn main() {
     // Initialize logging
     logging::init();
 
-    // // Get token from environment
-    // let token = dotenv::var("DO_TOKEN").unwrap();
+    // Get token from environment
+    let token = dotenv::var("DO_TOKEN").unwrap();
 
-    // // Create keep-alive HTTP connection pool
-    // let client = reqwest::Client::new();
+    // Create keep-alive HTTP connection pool
+    let client = reqwest::Client::new();
 
-    // // Create DigitalOcean instance
-    // let digitalocean = DigitalOcean::auth(token, client);
+    // Create DigitalOcean instance
+    let digitalocean = DigitalOcean::auth(token, client);
 
-    // // Apps
-    // let apps = match digitalocean.get_apps().await {
-    //     Ok(apps) => apps,
-    //     Err(e) => {
-    //         log::error!("{}", e);
-    //         return;
-    //     }
-    // };
+    // Apps
+    let apps = match digitalocean.get_apps().await {
+        Ok(apps) => apps,
+        Err(e) => {
+            log::error!("{}", e);
+            return;
+        }
+    };
 
-    // println!("{:#?}", apps);
+    println!("{:#?}", apps);
 
     // // Deployments
     // let deployments = digitalocean.get_deployments(&apps[3]).await.unwrap();
@@ -43,7 +43,11 @@ async fn main() {
     // --------------
     // Test DB
 
-    let _database = Database::init().await.unwrap();
+    let database = Database::init().await.unwrap();
+
+    for app in apps {
+        database.create_table(&app).await.unwrap();
+    }
 
 
     // 0. При запуске программы:
