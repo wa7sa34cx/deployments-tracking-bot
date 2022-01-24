@@ -8,7 +8,7 @@ use crate::database::Database;
 
 impl Database {
     /// Creates new Db instance
-    /// 
+    ///
     /// # Panics
     ///
     /// Panics if the DB_PATH variable are not specified in environment
