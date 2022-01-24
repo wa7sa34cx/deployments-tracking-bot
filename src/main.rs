@@ -4,7 +4,7 @@ use database::Database;
 // use digitalocean::DigitalOcean;
 
 mod database;
-// mod digitalocean;
+mod digitalocean;
 mod logging;
 
 #[tokio::main]
