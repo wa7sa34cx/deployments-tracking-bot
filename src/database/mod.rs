@@ -1,9 +1,8 @@
 //! Database module.
 
-pub mod init;
-
 use std::path::PathBuf;
-use tokio::fs;
+
+pub mod init;
 
 #[derive(Debug)]
 pub struct Database {

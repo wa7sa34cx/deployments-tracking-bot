@@ -1,9 +1,11 @@
-mod database;
-mod digitalocean;
-mod logging;
+//! Main module
 
 use database::Database;
 // use digitalocean::DigitalOcean;
+
+mod database;
+// mod digitalocean;
+mod logging;
 
 #[tokio::main]
 async fn main() {
