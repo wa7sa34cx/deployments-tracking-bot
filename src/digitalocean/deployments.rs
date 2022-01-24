@@ -153,19 +153,20 @@ fn create_error(progress: Option<Progress>) -> DeploymentError {
         None => return DeploymentError::default(),
     };
 
-    if progress.summary_steps.is_none() {
+    let summary_steps = match progress.summary_steps {
+        Some(s) => s,
+        None => return DeploymentError::default(),
+    };
+
+    let summary = if summary_steps.len() != 0 {
+        &summary_steps[0]
+    } else {
         return DeploymentError::default();
-    }
-
-    if progress.summary_steps.unwrap().len() == 0 {
-        return DeploymentError::default();
-    }
-
-    let summary_steps = progress.summary_steps.unwrap()[0];
-
-    let action = summary_steps.message_base;
-    let message = match summary_steps.reason {
-        Some(r) => r.message,
+    };
+    
+    let action = summary.message_base.to_owned();
+    let message = match &summary.reason {
+        Some(r) => r.message.to_owned(),
         None => None,
     };
 
