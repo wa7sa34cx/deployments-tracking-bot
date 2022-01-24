@@ -1,3 +1,4 @@
-/db/*
+/db
 /target
 .env
+.DS_Store
