@@ -46,9 +46,11 @@ async fn main() {
     let database = Database::init().await.unwrap();
 
     for app in apps {
-        database.create_table(&app).await.unwrap();
+        database.table(&app.id).create().await.unwrap();
+        println!("{}", database.table(&app.id).exists());
     }
 
+    
 
     // 0. При запуске программы:
     // 0.1 Создать все базы данных
