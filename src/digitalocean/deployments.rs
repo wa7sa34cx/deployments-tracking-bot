@@ -103,8 +103,9 @@ impl DigitalOcean {
                 id: d.id.unwrap(),
                 cause: d.cause.unwrap(),
                 phase: d.phase.unwrap(),
-                took_time: took_time(d.created_at.unwrap(), d.updated_at.unwrap()),
-                error: create_error(d.progress),
+                took_time: took_time(d.created_at.unwrap(), d.updated_at.unwrap())
+                    .unwrap_or("unknown".to_string()),
+                error: create_error(d.progress).unwrap_or(DeploymentError::default()),
             })
             .collect();
 
@@ -139,36 +140,32 @@ async fn get_json(digitalocean: &DigitalOcean, app: &App) -> anyhow::Result<Json
 }
 
 // Calculates the took time
-fn took_time(start: DateTime<Utc>, end: DateTime<Utc>) -> String {
-    match (end - start).to_std() {
-        Ok(d) => format_duration(d).to_string(),
-        Err(_) => "unknown".to_string(),
-    }
+fn took_time(start: DateTime<Utc>, end: DateTime<Utc>) -> anyhow::Result<String> {
+    Ok(format_duration((end - start).to_std()?).to_string())
+}
+
+#[derive(thiserror::Error, Debug)]
+enum CreateError {
+    #[error("progress is None")]
+    ProgressNone,
+    #[error("summary_steps is None")]
+    SummaryStepsNone,
+    #[error("summary_steps contains no elements")]
+    NoElements,
 }
 
 // Creates DeploymentError from Progress
-fn create_error(progress: Option<Progress>) -> DeploymentError {
-    let progress = match progress {
-        Some(p) => p,
-        None => return DeploymentError::default(),
-    };
+fn create_error(progress: Option<Progress>) -> anyhow::Result<DeploymentError> {
+    let summary = progress
+        .ok_or_else(|| CreateError::ProgressNone)?
+        .summary_steps
+        .ok_or_else(|| CreateError::SummaryStepsNone)?
+        .into_iter()
+        .nth(0)
+        .ok_or_else(|| CreateError::NoElements)?;
 
-    let summary_steps = match progress.summary_steps {
-        Some(s) => s,
-        None => return DeploymentError::default(),
-    };
+    let message = summary.reason.map_or(None, |r| r.message);
+    let action = summary.message_base;
 
-    let summary = if summary_steps.len() != 0 {
-        &summary_steps[0]
-    } else {
-        return DeploymentError::default();
-    };
-    
-    let action = summary.message_base.to_owned();
-    let message = match &summary.reason {
-        Some(r) => r.message.to_owned(),
-        None => None,
-    };
-
-    DeploymentError { message, action }
+    Ok(DeploymentError { message, action })
 }
