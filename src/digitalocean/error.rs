@@ -1,4 +1,4 @@
-//! Error respose from DigitalOcean
+//! Error respose from DigitalOcean.
 
 use serde_derive::Deserialize;
 
