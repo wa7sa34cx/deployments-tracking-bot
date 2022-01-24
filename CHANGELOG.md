@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `humantime` crate dependency
+- `thiserror` crate dependency
 
 ## 0.1.2 - 2022-01-23
 
