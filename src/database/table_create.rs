@@ -10,7 +10,7 @@ impl Table {
     pub async fn create(&self) -> Result<(), io::Error> {
         File::create(&self.file).await?;
 
-        log::info!("table {} has been successfully created", self.name);
+        log::debug!("table {} has been successfully created", self.name);
 
         Ok(())
     }

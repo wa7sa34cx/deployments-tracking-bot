@@ -11,6 +11,8 @@ impl Table {
         let contents = fs::read_to_string(&self.file).await?;
         let lines: Vec<String> = contents.split('\n').map(|s| s.to_string()).collect();
 
+        log::debug!("data from table {} has been successfully read", self.name);
+
         Ok(lines)
     }
 }

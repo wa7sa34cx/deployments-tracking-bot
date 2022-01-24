@@ -47,7 +47,7 @@ async fn main() {
 
     for app in apps {
         database.table(&app.id).create().await.unwrap();
-        println!("{}", database.table(&app.id).exists());
+        database.table(&app.id).exists();
     }
 
     // 0. При запуске программы:

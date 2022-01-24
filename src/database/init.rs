@@ -7,18 +7,22 @@ use tokio::fs;
 use crate::database::Database;
 
 impl Database {
-    // Creates new Db instance
+    /// Creates new Db instance
+    /// 
+    /// # Panics
+    ///
+    /// Panics if the DB_PATH variable are not specified in environment
     pub async fn init() -> Result<Self, io::Error> {
         let path = PathBuf::from(dotenv::var("DB_PATH").unwrap());
 
         // Remove the old database
         match fs::remove_dir_all(&path).await {
             Ok(_) => {
-                log::warn!("the old database has been deleted, creating...");
+                log::debug!("the old database has been deleted, creating...");
             }
             Err(e) => {
                 if e.kind() == io::ErrorKind::NotFound {
-                    log::warn!("the database does not exist, creating...");
+                    log::debug!("the database does not exist, creating...");
                 } else {
                     return Err(e);
                 }
@@ -27,7 +31,7 @@ impl Database {
 
         // And create an empty new one
         fs::create_dir(&path).await?;
-        log::info!("the database has been created");
+        log::debug!("the database has been successfully created");
 
         Ok(Self { path })
     }
