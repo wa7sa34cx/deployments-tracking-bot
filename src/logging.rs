@@ -5,14 +5,14 @@ use std::str::FromStr;
 
 // Config for creating... config
 #[derive(Debug)]
-struct Config {
+pub struct Logging {
     time_format: &'static str,
     level: LevelFilter,
 }
 
-impl Config {
+impl Logging {
     // Creates config from environment variables
-    fn from_env() -> Self {
+    pub fn from_env() -> Self {
         let time_format = if dotenv::var("LOG_SHOW_DATETIME")
             .unwrap_or_else(|_| "false".to_string())
             .parse::<bool>()
@@ -27,22 +27,20 @@ impl Config {
 
         Self { time_format, level }
     }
-}
 
-/// Initializes logging
-pub fn init() {
-    let config = Config::from_env();
+    /// Initializes logging
+    pub fn init(&self) {
+        let config = ConfigBuilder::new()
+            .set_time_format_str(self.time_format)
+            .set_target_level(self.level)
+            .build();
 
-    let log_config = ConfigBuilder::new()
-        .set_time_format_str(config.time_format)
-        .set_target_level(config.level)
-        .build();
-
-    TermLogger::init(
-        LevelFilter::Info,
-        log_config,
-        TerminalMode::Mixed,
-        ColorChoice::Auto,
-    )
-    .unwrap();
+        TermLogger::init(
+            LevelFilter::Info,
+            config,
+            TerminalMode::Mixed,
+            ColorChoice::Auto,
+        )
+        .unwrap();
+    }
 }

@@ -2,6 +2,7 @@
 
 use database::Database;
 use digitalocean::DigitalOcean;
+use logging::Logging;
 
 mod database;
 mod digitalocean;
@@ -13,7 +14,7 @@ async fn main() {
     dotenv::dotenv().ok();
 
     // Initialize logging
-    logging::init();
+    Logging::from_env().init();
 
     // Get token from environment
     let token = dotenv::var("DO_TOKEN").unwrap();
