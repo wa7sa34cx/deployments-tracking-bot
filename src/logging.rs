@@ -3,7 +3,7 @@
 use simplelog::*;
 use std::str::FromStr;
 
-// Config for creating... config
+/// Logging struct
 #[derive(Debug)]
 pub struct Logging {
     time_format: &'static str,
@@ -11,7 +11,7 @@ pub struct Logging {
 }
 
 impl Logging {
-    // Creates config from environment variables
+    /// Creates config from environment variables
     pub fn from_env() -> Self {
         let time_format = if dotenv::var("LOG_SHOW_DATETIME")
             .unwrap_or_else(|_| "false".to_string())
