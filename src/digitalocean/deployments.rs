@@ -1,10 +1,27 @@
 //! Retrieving a list of all deployments of an app.
 
 use chrono::{DateTime, Utc};
+use humantime::format_duration;
 use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
 
 use crate::digitalocean::{apps::App, error::ErrorResponse, DigitalOcean};
+
+/// Deployment info
+#[derive(Debug)]
+pub struct Deployment {
+    pub id: String,
+    pub cause: String,
+    pub phase: Phase,
+    pub took_time: String,
+    pub error: DeploymentError,
+}
+
+#[derive(Debug, Default)]
+pub struct DeploymentError {
+    pub message: Option<String>,
+    pub action: Option<String>,
+}
 
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/list_deployments
 #[derive(Debug, Deserialize)]
@@ -57,7 +74,8 @@ pub struct Reason {
 }
 
 impl DigitalOcean {
-    pub async fn get_deployments(&self, app: &App) -> anyhow::Result<Vec<JsonDeployment>> {
+    /// Gets a list of all deployments of the app
+    pub async fn get_deployments(&self, app: &App) -> anyhow::Result<Vec<Deployment>> {
         let json = get_json(self, app).await?;
 
         if json.deployments.is_none() {
@@ -66,14 +84,27 @@ impl DigitalOcean {
             ));
         }
 
-        let deployments: Vec<JsonDeployment> = json
+        let deployments: Vec<Deployment> = json
             .deployments
             .unwrap()
             .into_iter()
-            .filter(|d| d.id.is_some() && d.phase.is_some())
+            .filter(|d| {
+                d.id.is_some()
+                    && d.cause.is_some()
+                    && d.phase.is_some()
+                    && d.created_at.is_some()
+                    && d.updated_at.is_some()
+            })
             .filter(|d| match d.phase.as_ref().unwrap() {
                 Phase::Active | Phase::Superseded | Phase::Error | Phase::Canceled => true,
                 _ => false,
+            })
+            .map(|d| Deployment {
+                id: d.id.unwrap(),
+                cause: d.cause.unwrap(),
+                phase: d.phase.unwrap(),
+                took_time: took_time(d.created_at.unwrap(), d.updated_at.unwrap()),
+                error: create_error(d.progress),
             })
             .collect();
 
@@ -105,4 +136,38 @@ async fn get_json(digitalocean: &DigitalOcean, app: &App) -> anyhow::Result<Json
     let json = res.json::<JsonResponse>().await?;
 
     Ok(json)
+}
+
+// Calculates the took time
+fn took_time(start: DateTime<Utc>, end: DateTime<Utc>) -> String {
+    match (end - start).to_std() {
+        Ok(d) => format_duration(d).to_string(),
+        Err(_) => "unknown".to_string(),
+    }
+}
+
+// Creates DeploymentError from Progress
+fn create_error(progress: Option<Progress>) -> DeploymentError {
+    let progress = match progress {
+        Some(p) => p,
+        None => return DeploymentError::default(),
+    };
+
+    if progress.summary_steps.is_none() {
+        return DeploymentError::default();
+    }
+
+    if progress.summary_steps.unwrap().len() == 0 {
+        return DeploymentError::default();
+    }
+
+    let summary_steps = progress.summary_steps.unwrap()[0];
+
+    let action = summary_steps.message_base;
+    let message = match summary_steps.reason {
+        Some(r) => r.message,
+        None => None,
+    };
+
+    DeploymentError { message, action }
 }
