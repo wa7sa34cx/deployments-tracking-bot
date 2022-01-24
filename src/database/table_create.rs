@@ -1,7 +1,7 @@
 //! Creating table.
- 
-use tokio::fs::File;
+
 use std::io;
+use tokio::fs::File;
 
 use crate::database::table::Table;
 

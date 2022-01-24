@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `digitalocean` module
+- `logging` module
+- `database` module
 
 ## 0.1.2 - 2022-01-23
 
