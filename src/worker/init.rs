@@ -23,7 +23,7 @@ impl WorkerConfig {
 
 async fn init(digitalocean: DigitalOcean, database: Database) -> anyhow::Result<()> {
     let apps = digitalocean.apps().get().await?;
-            
+
     let mut handles = Vec::new();
 
     for app in apps {
@@ -53,8 +53,8 @@ async fn task(digitalocean: DigitalOcean, database: Database, app_id: &str) -> a
 
     // Get deployments
     let deployments = digitalocean.deployments().get(app_id).await?;
-    
-    // Write to the talbe 
+
+    // Write to the talbe
     let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
     database.table(app_id).write(data).await?;
 
