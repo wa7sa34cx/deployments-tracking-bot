@@ -14,7 +14,7 @@ async fn main() {
     dotenv::dotenv().ok();
 
     // Initialize logging
-    Logging::from_env().init();
+    Logging::from_env().init().unwrap();
 
     // Create DigitalOcean instance
     let digitalocean = DigitalOcean::from_env().init().await.unwrap();

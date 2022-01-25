@@ -1,5 +1,6 @@
 //! Logging initialization module
 
+use log::SetLoggerError;
 use simplelog::*;
 use std::str::FromStr;
 
@@ -29,12 +30,12 @@ impl Logging {
     }
 
     /// Initializes logging
-    pub fn init(&self) {
+    pub fn init(&self) -> Result<(), SetLoggerError> {
         let config = ConfigBuilder::new()
             .set_time_format_str(self.time_format)
             .set_target_level(LevelFilter::Error)
             .build();
 
-        TermLogger::init(self.level, config, TerminalMode::Mixed, ColorChoice::Auto).unwrap();
+        TermLogger::init(self.level, config, TerminalMode::Mixed, ColorChoice::Auto)
     }
 }
