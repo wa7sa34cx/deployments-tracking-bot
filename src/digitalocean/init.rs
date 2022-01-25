@@ -8,6 +8,11 @@ use crate::digitalocean::{error::ErrorResponse, DigitalOcean};
 /// Account info
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/get_user_information
 #[derive(Debug, Deserialize)]
+pub struct JsonResponse {
+    pub account: Account,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Account {
     pub status: Status,
 }
@@ -50,10 +55,10 @@ impl DigitalOcean {
             return Err(anyhow::anyhow!(json.error()));
         }
 
-        let json = res.json::<Account>().await?;
+        let json = res.json::<JsonResponse>().await?;
 
         // Check account status
-        match json.status {
+        match json.account.status {
             Status::Active => { 
                 log::debug!("working with DigitalOcean API has been successfully initialized");
                 Ok(self)
