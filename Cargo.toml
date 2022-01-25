@@ -2,6 +2,15 @@
 name = "telegram-devops-bot"
 version = "0.1.4"
 edition = "2021"
+keywords = ["digitalocean", "telegram", "devops"]
+readme = "README.md"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "telegram_devops_bot"
 
 [dependencies]
 tokio = { version = "1", features = [ "full" ] }
