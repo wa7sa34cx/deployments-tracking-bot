@@ -2,9 +2,10 @@
 
 use std::io;
 use std::path::PathBuf;
+use std::sync::Arc;
 use tokio::fs;
 
-use crate::database::Database;
+use crate::database::{Database, SharedDatabase};
 
 impl Database {
     /// Creates new Database instance
@@ -15,7 +16,7 @@ impl Database {
     pub fn from_env() -> Self {
         let path = PathBuf::from(dotenv::var("DB_PATH").unwrap());
 
-        Self { path }
+        Self(Arc::new(SharedDatabase { path }))
     }
 
     // Initializes database
