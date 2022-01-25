@@ -3,14 +3,10 @@
 use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
 
-use crate::digitalocean::{error::ErrorResponse, DigitalOcean};
-
-/// App info
-#[derive(Debug)]
-pub struct App {
-    pub id: String,
-    pub name: String,
-}
+use crate::digitalocean::{
+    apps::{App, Apps},
+    error::ErrorResponse,
+};
 
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/list_apps
 #[derive(Debug, Deserialize)]
@@ -29,9 +25,9 @@ pub struct Spec {
     pub name: String,
 }
 
-impl DigitalOcean {
+impl<'a> Apps<'a> {
     /// Gets list of apps
-    pub async fn get_apps(&self) -> anyhow::Result<Vec<App>> {
+    pub async fn get(&self) -> anyhow::Result<Vec<App>> {
         let json = get_json(self).await?;
 
         if json.apps.is_none() {
@@ -60,15 +56,12 @@ impl DigitalOcean {
 }
 
 // Gets json data from DigitalOcean API
-async fn get_json(digitalocean: &DigitalOcean) -> anyhow::Result<JsonResponse> {
-    let res = digitalocean
+async fn get_json<'a>(apps: &Apps<'a>) -> anyhow::Result<JsonResponse> {
+    let res = apps
         .client
-        .get("https://api.digitalocean.com/v2/apps")
+        .get(apps.url)
         .header(header::CONTENT_TYPE, "application/json")
-        .header(
-            header::AUTHORIZATION,
-            &format!("Bearer {}", digitalocean.token),
-        )
+        .header(header::AUTHORIZATION, &format!("Bearer {}", apps.token))
         .send()
         .await?;
 

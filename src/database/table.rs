@@ -1,8 +1,14 @@
-//! Creating table instance.
+//! Creating Table instance.
 
 use std::path::PathBuf;
 
 use crate::database::Database;
+
+pub mod create;
+pub mod exists;
+pub mod read;
+pub mod write;
+
 
 #[derive(Debug)]
 pub struct Table {

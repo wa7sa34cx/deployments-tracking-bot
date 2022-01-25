@@ -23,7 +23,7 @@ async fn main() {
     let database = Database::from_env().init().await.unwrap();
 
     // Apps
-    let apps = match digitalocean.get_apps().await {
+    let apps = match digitalocean.apps().get().await {
         Ok(apps) => apps,
         Err(e) => {
             log::error!("{}", e);
@@ -33,7 +33,6 @@ async fn main() {
 
     println!("{:#?}", apps);
 
-    
     for app in apps {
         database.table(&app.id).create().await.unwrap();
         database.table(&app.id).exists();

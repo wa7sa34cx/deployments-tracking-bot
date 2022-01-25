@@ -60,10 +60,10 @@ impl DigitalOcean {
 
         // Check account status
         match json.account.status {
-            Status::Active => { 
+            Status::Active => {
                 log::debug!("working with DigitalOcean API has been successfully initialized");
                 Ok(self)
-            },
+            }
             Status::Warning => Err(anyhow::anyhow!("your account is in warning status")),
             Status::Locked => Err(anyhow::anyhow!("your account is loked")),
         }

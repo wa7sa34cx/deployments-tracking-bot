@@ -1,15 +1,11 @@
 //! Database module.
 
-use std::path::PathBuf;
 use std::ops::Deref;
+use std::path::PathBuf;
 use std::sync::Arc;
 
 pub mod init;
 pub mod table;
-pub mod table_create;
-pub mod table_exists;
-pub mod table_read;
-pub mod table_write;
 
 /// Main database struct
 pub struct Database(Arc<SharedDatabase>);
