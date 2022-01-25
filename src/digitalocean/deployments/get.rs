@@ -77,6 +77,8 @@ impl<'a> DeploymentsHandler<'a> {
                 id: d.id.unwrap(),
                 cause: d.cause.unwrap(),
                 phase: d.phase.unwrap(),
+                created_at: d.created_at.unwrap(),
+                updated_at: d.updated_at.unwrap(),
                 took_time: took_time(d.created_at.unwrap(), d.updated_at.unwrap())
                     .unwrap_or("unknown".to_string()),
                 error: create_error(d.progress).unwrap_or(DeploymentError::default()),
