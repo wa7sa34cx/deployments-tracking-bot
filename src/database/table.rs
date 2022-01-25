@@ -17,12 +17,14 @@ pub struct Table {
 
 impl Database {
     /// Creates a new table in the database
-    pub fn table(&self, name: &str) -> Table {
+    pub fn table(&self, name: impl Into<String>) -> Table {
+        let name: String = name.into();
+
         let mut file = PathBuf::from(self.path.as_path());
         file.push(&name);
 
         Table {
-            name: name.to_string(),
+            name,
             file,
         }
     }
