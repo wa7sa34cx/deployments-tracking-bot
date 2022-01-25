@@ -6,14 +6,18 @@ use std::str::FromStr;
 
 /// Logging struct
 #[derive(Debug)]
-pub struct Logging {
+pub struct Logging {}
+
+/// Logging config struct
+#[derive(Debug)]
+pub struct LoggingConfig {
     time_format: &'static str,
     level: LevelFilter,
 }
 
 impl Logging {
     /// Creates config from environment variables
-    pub fn from_env() -> Self {
+    pub fn from_env() -> LoggingConfig {
         let time_format = if dotenv::var("LOG_SHOW_DATETIME")
             .unwrap_or_else(|_| "false".to_string())
             .parse::<bool>()
@@ -26,9 +30,11 @@ impl Logging {
 
         let level = LevelFilter::from_str(dotenv::var("LOG_LEVEL").unwrap().as_str()).unwrap();
 
-        Self { time_format, level }
+        LoggingConfig { time_format, level }
     }
+}
 
+impl LoggingConfig {
     /// Initializes logging
     pub fn init(&self) -> Result<(), SetLoggerError> {
         let config = ConfigBuilder::new()

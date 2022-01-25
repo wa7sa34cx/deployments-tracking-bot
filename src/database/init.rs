@@ -1,26 +1,14 @@
 //! Database initialization.
 
 use std::io;
-use std::path::PathBuf;
 use std::sync::Arc;
 use tokio::fs;
 
-use crate::database::{Database, SharedDatabase};
+use crate::database::{Database, DatabaseConfig};
 
-impl Database {
-    /// Creates new Database instance
-    ///
-    /// # Panics
-    ///
-    /// Panics if the DB_PATH variable are not specified in environment
-    pub fn from_env() -> Self {
-        let path = PathBuf::from(dotenv::var("DB_PATH").unwrap());
-
-        Self(Arc::new(SharedDatabase { path }))
-    }
-
+impl DatabaseConfig {
     // Initializes database
-    pub async fn init(self) -> Result<Self, io::Error> {
+    pub async fn init(self) -> Result<Database, io::Error> {
         // Remove the old database
         match fs::remove_dir_all(&self.path).await {
             Ok(_) => {
@@ -39,6 +27,6 @@ impl Database {
         fs::create_dir(&self.path).await?;
         log::debug!("the database has been successfully initialized");
 
-        Ok(self)
+        Ok(Database(Arc::new(DatabaseConfig { path: self.path })))
     }
 }
