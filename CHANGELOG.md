@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Safe multithreading for `database` module
+- Safe multithreading for working with database
+- Safe multithreading for working with DigitalOcean API
 
 ### Changed
 
