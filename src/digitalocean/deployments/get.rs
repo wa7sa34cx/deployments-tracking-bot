@@ -47,7 +47,7 @@ pub struct Reason {
     pub message: Option<String>,
 }
 
-impl<'a> DeploymentsHandler<'a> {
+impl DeploymentsHandler {
     /// Gets a list of all deployments of the app
     pub async fn get(&self, app_id: &str) -> anyhow::Result<Vec<Deployment>> {
         let json = get_json(self, app_id).await?;
@@ -90,20 +90,20 @@ impl<'a> DeploymentsHandler<'a> {
 }
 
 // Gets json data from DigitalOcean API
-async fn get_json<'a>(
-    handler: &DeploymentsHandler<'a>,
+async fn get_json(
+    handler: &DeploymentsHandler,
     app_id: &str,
 ) -> anyhow::Result<JsonResponse> {
     let url = handler.url.replace("{app_id}", app_id);
 
     let res = handler
-        .config
+        .digitalocean
         .client
         .get(url)
         .header(header::CONTENT_TYPE, "application/json")
         .header(
             header::AUTHORIZATION,
-            &format!("Bearer {}", handler.config.token),
+            &format!("Bearer {}", handler.digitalocean.token),
         )
         .send()
         .await?;

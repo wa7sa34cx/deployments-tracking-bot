@@ -3,12 +3,13 @@
 use database::Database;
 use digitalocean::DigitalOcean;
 use logging::Logging;
+use worker::Worker;
 // use telegram::Telegram;
-use tokio::task;
 
 pub mod database;
 pub mod digitalocean;
 pub mod logging;
+pub mod worker;
 
 pub async fn run() -> anyhow::Result<()> {
     // Load environment variables from .env
@@ -26,44 +27,10 @@ pub async fn run() -> anyhow::Result<()> {
     // Create Telegram instance
     // let telegram = Telegram::from_env().init().await.unwrap();
 
-    // Apps
-    let apps = match digitalocean.apps().get().await {
-        Ok(apps) => apps,
-        Err(e) => {
-            log::error!("{}", e);
-            return Ok(());
-        }
-    };
+    // Create Worker instance
+    let worker = Worker::from_env().init(digitalocean, database).await.unwrap();
 
-    println!("{:#?}", apps);
-
-    //-------- TRY PARALLELISM ------
-    let mut handles = Vec::new();
-
-    for app in apps {
-
-        let docean = digitalocean.clone();
-        let dbase = database.clone();
-
-        let handle = task::spawn(async move {
-            dbase.table(&app.id).create().await.unwrap();
-            dbase.table(&app.id).exists();
-
-            let deployments = docean.deployments().get(&app.id).await.unwrap();
-
-            let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
-            dbase.table(&app.id).write(data).await.unwrap();
-        });
-
-        handles.push(handle);
-    }
-
-    // Await for all tasks
-    for handle in handles {
-        handle.await.unwrap();
-    }
-
-
+    log::info!("deployments monitoring has been successfully run");
 
     // 0. При запуске программы:
     // 0.1 Создать все базы данных

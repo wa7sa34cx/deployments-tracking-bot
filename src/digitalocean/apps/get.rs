@@ -22,7 +22,7 @@ pub struct Spec {
     pub name: String,
 }
 
-impl<'a> AppsHandler<'a> {
+impl AppsHandler {
     /// Gets list of apps
     pub async fn get(&self) -> anyhow::Result<Vec<App>> {
         let json = get_json(self).await?;
@@ -53,15 +53,15 @@ impl<'a> AppsHandler<'a> {
 }
 
 // Gets json data from DigitalOcean API
-async fn get_json<'a>(handler: &AppsHandler<'a>) -> anyhow::Result<JsonResponse> {
+async fn get_json(handler: &AppsHandler) -> anyhow::Result<JsonResponse> {
     let res = handler
-        .config
+        .digitalocean
         .client
         .get(handler.url)
         .header(header::CONTENT_TYPE, "application/json")
         .header(
             header::AUTHORIZATION,
-            &format!("Bearer {}", handler.config.token),
+            &format!("Bearer {}", handler.digitalocean.token),
         )
         .send()
         .await?;
