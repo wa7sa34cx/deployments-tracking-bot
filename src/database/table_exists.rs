@@ -8,9 +8,10 @@ impl Table {
         let exists = self.file.exists();
 
         if exists {
-            log::debug!("table {} exists", exists);
+            log::debug!("table {} exists", self.name);
+        } else {
+            log::debug!("table {} doesn't exist", self.name);
         }
-        log::debug!("table {} doesn't exist", exists);
 
         exists
     }
