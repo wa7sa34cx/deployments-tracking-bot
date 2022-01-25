@@ -4,7 +4,7 @@ use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
 
 use crate::digitalocean::{
-    apps::{App, Apps},
+    apps::{App, DigitalOceanApps},
     error::ErrorResponse,
 };
 
@@ -25,7 +25,7 @@ pub struct Spec {
     pub name: String,
 }
 
-impl<'a> Apps<'a> {
+impl<'a> DigitalOceanApps<'a> {
     /// Gets list of apps
     pub async fn get(&self) -> anyhow::Result<Vec<App>> {
         let json = get_json(self).await?;
@@ -56,7 +56,7 @@ impl<'a> Apps<'a> {
 }
 
 // Gets json data from DigitalOcean API
-async fn get_json<'a>(apps: &Apps<'a>) -> anyhow::Result<JsonResponse> {
+async fn get_json<'a>(apps: &DigitalOceanApps<'a>) -> anyhow::Result<JsonResponse> {
     let res = apps
         .client
         .get(apps.url)
