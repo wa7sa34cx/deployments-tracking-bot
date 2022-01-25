@@ -4,7 +4,7 @@ use log::SetLoggerError;
 use simplelog::*;
 use std::str::FromStr;
 
-/// Logging struct1
+/// Logging struct
 #[derive(Debug)]
 pub struct Logging {}
 
