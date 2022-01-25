@@ -16,14 +16,11 @@ async fn main() {
     // Initialize logging
     Logging::from_env().init();
 
-    // Get token from environment
-    let token = dotenv::var("DO_TOKEN").unwrap();
-
-    // Create keep-alive HTTP connection pool
-    let client = reqwest::Client::new();
-
     // Create DigitalOcean instance
-    let digitalocean = DigitalOcean::auth(token, client);
+    let digitalocean = DigitalOcean::from_env().init().await.unwrap();
+
+    // Create DataBase instance
+    let database = Database::from_env().init().await.unwrap();
 
     // Apps
     let apps = match digitalocean.get_apps().await {
@@ -44,7 +41,7 @@ async fn main() {
     // --------------
     // Test DB
 
-    let database = Database::init().await.unwrap();
+    
 
     for app in apps {
         database.table(&app.id).create().await.unwrap();

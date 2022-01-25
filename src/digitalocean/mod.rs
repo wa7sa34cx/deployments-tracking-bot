@@ -3,9 +3,9 @@
 use reqwest::Client;
 
 pub mod apps;
-pub mod auth;
 pub mod deployments;
 pub mod error;
+pub mod init;
 
 /// Main DigitalOcean struct
 #[derive(Debug)]
