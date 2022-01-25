@@ -37,7 +37,8 @@ async fn main() {
         database.table(&app.id).create().await.unwrap();
         database.table(&app.id).exists();
 
-        let deployments = digitalocean.get_deployments(&app).await.unwrap();
+        let deployments = digitalocean.deployments().get(&app.id).await.unwrap();
+
         let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
         database.table(&app.id).write(data).await.unwrap();
     }

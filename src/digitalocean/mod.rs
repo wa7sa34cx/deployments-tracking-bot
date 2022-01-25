@@ -8,6 +8,7 @@ pub mod apps;
 pub mod deployments;
 pub mod error;
 pub mod init;
+pub mod models;
 
 /// Main DigitalOcean struct
 #[derive(Debug)]

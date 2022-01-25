@@ -23,9 +23,6 @@ impl Database {
         let mut file = PathBuf::from(self.path.as_path());
         file.push(&name);
 
-        Table {
-            name,
-            file,
-        }
+        Table { name, file }
     }
 }

@@ -1,34 +1,21 @@
-//! Creating Apps instance.
+//! Creating DigitalOceanApps instance.
 
-use reqwest::Client;
-
-use crate::digitalocean::DigitalOcean;
+use crate::digitalocean::{DigitalOcean, DigitalOceanConfig};
 
 pub mod get;
 
 #[derive(Debug)]
-pub struct DigitalOceanApps<'a> {
-    pub token: &'a str,
-    pub client: &'a Client,
+pub struct AppsHandler<'a> {
+    pub config: &'a DigitalOceanConfig,
     pub url: &'a str,
 }
 
-/// App info
-#[derive(Debug)]
-pub struct App {
-    pub id: String,
-    pub name: String,
-}
-
 impl DigitalOcean {
-    /// Creates apps endpoint
-    pub fn apps(&self) -> DigitalOceanApps {
-        DigitalOceanApps {
-            token: &self.token,
-            client: &self.client,
+    /// Creates apps endpoint config
+    pub fn apps(&self) -> AppsHandler {
+        AppsHandler {
+            config: &self,
             url: "https://api.digitalocean.com/v2/apps",
         }
     }
 }
-
-

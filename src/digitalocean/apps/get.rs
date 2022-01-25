@@ -3,10 +3,7 @@
 use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
 
-use crate::digitalocean::{
-    apps::{App, DigitalOceanApps},
-    error::ErrorResponse,
-};
+use crate::digitalocean::{apps::AppsHandler, error::ErrorResponse, models::app::App};
 
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/list_apps
 #[derive(Debug, Deserialize)]
@@ -25,7 +22,7 @@ pub struct Spec {
     pub name: String,
 }
 
-impl<'a> DigitalOceanApps<'a> {
+impl<'a> AppsHandler<'a> {
     /// Gets list of apps
     pub async fn get(&self) -> anyhow::Result<Vec<App>> {
         let json = get_json(self).await?;
@@ -56,12 +53,16 @@ impl<'a> DigitalOceanApps<'a> {
 }
 
 // Gets json data from DigitalOcean API
-async fn get_json<'a>(apps: &DigitalOceanApps<'a>) -> anyhow::Result<JsonResponse> {
-    let res = apps
+async fn get_json<'a>(handler: &AppsHandler<'a>) -> anyhow::Result<JsonResponse> {
+    let res = handler
+        .config
         .client
-        .get(apps.url)
+        .get(handler.url)
         .header(header::CONTENT_TYPE, "application/json")
-        .header(header::AUTHORIZATION, &format!("Bearer {}", apps.token))
+        .header(
+            header::AUTHORIZATION,
+            &format!("Bearer {}", handler.config.token),
+        )
         .send()
         .await?;
 
