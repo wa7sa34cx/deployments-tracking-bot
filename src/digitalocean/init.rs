@@ -1,10 +1,10 @@
 //! DigitalOcean initialization.
 
-use reqwest::{header, Client, StatusCode};
+use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
 use std::sync::Arc;
 
-use crate::digitalocean::{error::ErrorResponse, DigitalOcean, SharedDigitalOcean};
+use crate::digitalocean::{error::ErrorResponse, DigitalOcean, DigitalOceanConfig};
 
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/get_user_information
 #[derive(Debug, Deserialize)]
@@ -26,23 +26,9 @@ pub enum Status {
     Locked,
 }
 
-impl DigitalOcean {
-    /// Creates new DigitalOcean instance
-    ///
-    /// # Panics
-    ///
-    /// Panics if the DO_TOKEN variable are not specified in environment
-    pub fn from_env() -> Self {
-        let token = dotenv::var("DO_TOKEN").unwrap();
-
-        // Create keep-alive HTTP connection pool
-        let client = Client::new();
-
-        Self(Arc::new(SharedDigitalOcean { token, client }))
-    }
-
+impl DigitalOceanConfig {
     // Initializes working with DigitalOcean API, checks account status
-    pub async fn init(self) -> anyhow::Result<Self> {
+    pub async fn init(self) -> anyhow::Result<DigitalOcean> {
         let res = self
             .client
             .get("https://api.digitalocean.com/v2/account")
@@ -62,7 +48,10 @@ impl DigitalOcean {
         match json.account.status {
             Status::Active => {
                 log::debug!("working with DigitalOcean API has been successfully initialized");
-                Ok(self)
+                Ok(DigitalOcean(Arc::new(DigitalOceanConfig {
+                    token: self.token,
+                    client: self.client,
+                })))
             }
             Status::Warning => Err(anyhow::anyhow!("your account is in warning status")),
             Status::Locked => Err(anyhow::anyhow!("your account is loked")),
