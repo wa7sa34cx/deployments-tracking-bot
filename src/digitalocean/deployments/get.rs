@@ -90,10 +90,7 @@ impl DeploymentsHandler {
 }
 
 // Gets json data from DigitalOcean API
-async fn get_json(
-    handler: &DeploymentsHandler,
-    app_id: &str,
-) -> anyhow::Result<JsonResponse> {
+async fn get_json(handler: &DeploymentsHandler, app_id: &str) -> anyhow::Result<JsonResponse> {
     let url = handler.url.replace("{app_id}", app_id);
 
     let res = handler
