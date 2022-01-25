@@ -35,12 +35,6 @@ impl Logging {
             .set_target_level(LevelFilter::Error)
             .build();
 
-        TermLogger::init(
-            self.level,
-            config,
-            TerminalMode::Mixed,
-            ColorChoice::Auto,
-        )
-        .unwrap();
+        TermLogger::init(self.level, config, TerminalMode::Mixed, ColorChoice::Auto).unwrap();
     }
 }
