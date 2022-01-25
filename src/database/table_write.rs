@@ -1,4 +1,4 @@
-//! Creating table
+//! Creating table.
 
 use std::io;
 use tokio::fs;

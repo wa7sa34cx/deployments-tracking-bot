@@ -1,4 +1,4 @@
-//! Creating table instance
+//! Creating table instance.
 
 use std::path::PathBuf;
 

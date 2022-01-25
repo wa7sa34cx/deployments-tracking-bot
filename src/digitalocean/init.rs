@@ -1,4 +1,4 @@
-//! DigitalOcean initialization
+//! DigitalOcean initialization.
 
 use reqwest::{header, Client, StatusCode};
 use serde_derive::Deserialize;

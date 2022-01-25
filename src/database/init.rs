@@ -1,4 +1,4 @@
-//! Database initialization
+//! Database initialization.
 
 use std::io;
 use std::path::PathBuf;

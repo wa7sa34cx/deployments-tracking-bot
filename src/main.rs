@@ -33,10 +33,7 @@ async fn main() {
 
     println!("{:#?}", apps);
 
-
-
     
-
     for app in apps {
         database.table(&app.id).create().await.unwrap();
         database.table(&app.id).exists();
