@@ -32,11 +32,11 @@ impl Logging {
     pub fn init(&self) {
         let config = ConfigBuilder::new()
             .set_time_format_str(self.time_format)
-            .set_target_level(self.level)
+            .set_target_level(LevelFilter::Error)
             .build();
 
         TermLogger::init(
-            LevelFilter::Info,
+            self.level,
             config,
             TerminalMode::Mixed,
             ColorChoice::Auto,
