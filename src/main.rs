@@ -49,6 +49,10 @@ async fn main() {
     for app in apps {
         database.table(&app.id).create().await.unwrap();
         database.table(&app.id).exists();
+
+        let deployments = digitalocean.get_deployments(&app).await.unwrap();
+        let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
+        database.table(&app.id).write(data).await.unwrap();
     }
 
     // 0. При запуске программы:
