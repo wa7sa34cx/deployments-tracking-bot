@@ -4,7 +4,7 @@ use crate::database::Database;
 use crate::digitalocean::DigitalOcean;
 
 pub mod init;
-pub mod work;
+// pub mod work;
 
 /// Worker
 pub struct Worker {
@@ -25,7 +25,10 @@ impl Worker {
     ///
     /// Panics if the DO_RATE_LIMIT variable are not specified in environment
     pub fn from_env() -> WorkerConfig {
-        let rate_limit = dotenv::var("DO_RATE_LIMIT").unwrap().parse::<u64>().unwrap();
+        let rate_limit = dotenv::var("DO_RATE_LIMIT")
+            .unwrap()
+            .parse::<u64>()
+            .unwrap();
 
         WorkerConfig { rate_limit }
     }

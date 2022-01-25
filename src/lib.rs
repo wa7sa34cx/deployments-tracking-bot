@@ -16,21 +16,23 @@ pub async fn run() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
 
     // Initialize logging
-    Logging::from_env().init().unwrap();
+    Logging::from_env().init()?;
 
     // Create DigitalOcean instance
-    let digitalocean = DigitalOcean::from_env().init().await.unwrap();
+    let digitalocean = DigitalOcean::from_env().init().await?;
 
     // Create DataBase instance
-    let database = Database::from_env().init().await.unwrap();
+    let database = Database::from_env().init().await?;
 
     // Create Telegram instance
     // let telegram = Telegram::from_env().init().await.unwrap();
 
     // Create Worker instance
-    let worker = Worker::from_env().init(digitalocean, database).await.unwrap();
+    let _worker = Worker::from_env().init(digitalocean, database).await;
 
     log::info!("deployments monitoring has been successfully run");
+
+    // worker.work().await.unwrap();
 
     // 0. При запуске программы:
     // 0.1 Создать все базы данных
@@ -59,9 +61,4 @@ pub async fn run() -> anyhow::Result<()> {
     // 2. GAP
 
     Ok(())
-}
-
-// Polling every n secs
-fn _calculate_gap(rate_limit: u16, apps_num: u16) -> u16 {
-    60 / (rate_limit / 60 / (apps_num + 1)) + 5
 }
