@@ -10,7 +10,7 @@ impl Table {
     pub async fn read(&self) -> Result<Vec<String>, io::Error> {
         // Read from the file
         let contents = fs::read_to_string(&self.file).await?;
-        
+
         let lines: Vec<String> = contents.split('\n').map(|s| s.to_string()).collect();
 
         log::debug!("data from table {} has been successfully read", self.name);
