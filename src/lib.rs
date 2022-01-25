@@ -10,8 +10,7 @@ pub mod database;
 pub mod digitalocean;
 pub mod logging;
 
-#[tokio::main]
-async fn run() -> anyhow::Result<()> {
+pub async fn run() -> anyhow::Result<()> {
     // Load environment variables from .env
     dotenv::dotenv().ok();
 
@@ -32,7 +31,7 @@ async fn run() -> anyhow::Result<()> {
         Ok(apps) => apps,
         Err(e) => {
             log::error!("{}", e);
-            return;
+            return Ok(());
         }
     };
 
@@ -64,8 +63,7 @@ async fn run() -> anyhow::Result<()> {
         handle.await.unwrap();
     }
 
-        
-    
+
 
     // 0. При запуске программы:
     // 0.1 Создать все базы данных
@@ -92,6 +90,8 @@ async fn run() -> anyhow::Result<()> {
     // 2.4.2.1 Записать деплои в БД
 
     // 2. GAP
+
+    Ok(())
 }
 
 // Polling every n secs
