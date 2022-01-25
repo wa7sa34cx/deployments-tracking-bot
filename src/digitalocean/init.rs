@@ -2,16 +2,17 @@
 
 use reqwest::{header, Client, StatusCode};
 use serde_derive::Deserialize;
+use std::sync::Arc;
 
-use crate::digitalocean::{error::ErrorResponse, DigitalOcean};
+use crate::digitalocean::{error::ErrorResponse, DigitalOcean, SharedDigitalOcean};
 
-/// Account info
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/get_user_information
 #[derive(Debug, Deserialize)]
 pub struct JsonResponse {
     pub account: Account,
 }
 
+// Account info
 #[derive(Debug, Deserialize)]
 pub struct Account {
     pub status: Status,
@@ -37,7 +38,7 @@ impl DigitalOcean {
         // Create keep-alive HTTP connection pool
         let client = Client::new();
 
-        Self { token, client }
+        Self(Arc::new(SharedDigitalOcean { token, client }))
     }
 
     // Initializes working with DigitalOcean API, checks account status
