@@ -32,7 +32,7 @@ impl Deref for Database {
 }
 
 impl Database {
-    /// Creates DatabaseConfig
+    /// Creates DatabaseConfig from environment
     ///
     /// # Panics
     ///
@@ -43,5 +43,3 @@ impl Database {
         DatabaseConfig { path }
     }
 }
-
-

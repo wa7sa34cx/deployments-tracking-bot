@@ -9,7 +9,6 @@ pub mod exists;
 pub mod read;
 pub mod write;
 
-
 #[derive(Debug)]
 pub struct Table {
     pub name: String,
