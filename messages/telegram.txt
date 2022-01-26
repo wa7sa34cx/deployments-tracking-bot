@@ -1,10 +1,8 @@
-🏗 New deployment has been detected!
+{status}
 
 **App:** {app_name}
-**Status:** {status}
 **Cause:** {cause}
 **Updated at:** {updated_at}
 **Took time:** {took_time}
 
-{error_message}
-{error_action}
+{error_message} {error_action}
