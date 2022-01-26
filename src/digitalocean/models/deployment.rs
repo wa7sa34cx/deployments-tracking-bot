@@ -29,7 +29,7 @@ pub enum Phase {
     PendingBuild,
     Building,
     PendingDeploy,
-    Deployng,
+    Deploying,
     Active,
     Superseded,
     Error,
