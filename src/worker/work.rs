@@ -9,7 +9,7 @@ use crate::digitalocean::models::app::App;
 use crate::worker::Worker;
 
 impl Worker {
-    // Gets to work!
+    /// Gets to work!
     pub async fn work(&self) {
         let mut interval = time::interval(Duration::from_secs(self.config.interval));
 
