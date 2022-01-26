@@ -1,6 +1,6 @@
 //! Main module
 
-use telegram_devops_bot::run;
+use deployments_tracking_bot::run;
 
 #[tokio::main]
 async fn main() {

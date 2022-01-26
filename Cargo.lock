@@ -81,6 +81,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 
 [[package]]
+name = "deployments-tracking-bot"
+version = "0.1.5"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "dotenv",
+ "humantime",
+ "log",
+ "reqwest",
+ "serde",
+ "serde_derive",
+ "simplelog",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
 name = "dotenv"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -764,23 +781,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-xid",
-]
-
-[[package]]
-name = "telegram-devops-bot"
-version = "0.1.5"
-dependencies = [
- "anyhow",
- "chrono",
- "dotenv",
- "humantime",
- "log",
- "reqwest",
- "serde",
- "serde_derive",
- "simplelog",
- "thiserror",
- "tokio",
 ]
 
 [[package]]

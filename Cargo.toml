@@ -1,5 +1,5 @@
 [package]
-name = "telegram-devops-bot"
+name = "deployments-tracking-bot"
 version = "0.1.5"
 edition = "2021"
 keywords = ["digitalocean", "telegram", "devops"]
@@ -10,7 +10,7 @@ path = "src/lib.rs"
 
 [[bin]]
 path = "src/main.rs"
-name = "telegram_devops_bot"
+name = "deployments_tracking_bot"
 
 [dependencies]
 tokio = { version = "1", features = [ "full" ] }
