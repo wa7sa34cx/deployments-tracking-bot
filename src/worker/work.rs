@@ -5,7 +5,7 @@ use tokio::{
     time::{self, Duration},
 };
 
-use crate::digitalocean::models::app::App;
+use crate::digitalocean::models::{app::App, deployment::MsgType};
 use crate::worker::Worker;
 
 impl Worker {
@@ -53,7 +53,7 @@ async fn work(worker: &Worker) -> anyhow::Result<()> {
 }
 
 async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
-    // Check if the table exists
+    // Check if the table doesn't exists
     if !worker.database.table(&app.id).exists() {
         log::info!("a new App ({}) has been detected", &app.id);
 
@@ -68,6 +68,15 @@ async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
         worker.database.table(&app.id).write(data).await?;
 
         // Telegram!!!!!
+        // Send last deployment
+        let deployment = deployments
+            .get(0)
+            .ok_or_else(|| anyhow::anyhow!("where did the deployment go?"))?;
+
+        log::info!("a new deployment ({}) has been detected", &deployment.id);
+
+        let message = deployment.message(MsgType::Telegram).await?;
+        println!("{}", message);
 
         return Ok(());
     }
@@ -78,12 +87,14 @@ async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
     // Get deployments from table
     let deployments_current = worker.database.table(&app.id).read().await?;
 
-    // Search for new deployments
+    // Search for new deployments and send notification
     for deployment in deployments.iter() {
         if !deployments_current.contains(&deployment.id) {
-            log::info!("A new deployment ({}) has been detected", &deployment.id);
+            log::info!("a new deployment ({}) has been detected", &deployment.id);
 
             // Telegram!!!!!
+            let message = deployment.message(MsgType::Telegram).await?;
+            println!("{}", message);
         }
     }
 
