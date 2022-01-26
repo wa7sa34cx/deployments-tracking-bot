@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde_derive::Deserialize;
+use std::fmt;
 
 use crate::digitalocean::models::app::App;
 
@@ -35,3 +36,34 @@ pub enum Phase {
     Error,
     Canceled,
 }
+
+impl fmt::Display for Phase {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let printable = match *self {
+            Phase::Unknown => "🤷‍♂️ Unknown",
+            Phase::PendingBuild => "🏗 Pending build",
+            Phase::Building => "🏗 Building",
+            Phase::PendingDeploy => "🏗 Pending deploy",
+            Phase::Deploying => "🏗 Deploying",
+            Phase::Active => "✅ Live",
+            Phase::Superseded => "🔷 Superseded",
+            Phase::Error => "🚨 Faild",
+            Phase::Canceled => "❌ Canceled",
+        };
+
+        write!(f, "{}", printable)
+    }
+}
+
+
+// impl Deployment {
+//     pub fn message(&self) -> String {
+//         format!("🏗 New deployment has been detected\n
+//         App: {}\n
+//         Status: {}\n
+//         Cause: {}\n
+//         Updated at: {}\n
+//         Took time: {}\n\n
+//         ", self.app.name)
+//     }
+// }
