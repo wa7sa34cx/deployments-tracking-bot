@@ -14,6 +14,8 @@ impl Worker {
         let mut interval = time::interval(Duration::from_secs(self.config.interval));
 
         loop {
+            log::debug!("checking for new deployments...");
+
             if let Err(e) = work(self).await {
                 log::warn!("{}", e);
             }
