@@ -14,13 +14,13 @@ impl Worker {
         let mut interval = time::interval(Duration::from_secs(self.config.interval));
 
         loop {
+            interval.tick().await;
+
             log::debug!("checking for new deployments...");
 
             if let Err(e) = work(self).await {
                 log::warn!("{}", e);
-            }
-
-            interval.tick().await;
+            }            
         }
     }
 }
