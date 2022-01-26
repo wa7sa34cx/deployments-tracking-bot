@@ -19,7 +19,7 @@ pub struct Worker {
 /// Cloning is cheap
 #[derive(Debug, Clone)]
 pub struct WorkerConfig {
-    pub rate_limit: u64,
+    pub interval: u64,
 }
 
 impl Worker {
@@ -27,13 +27,13 @@ impl Worker {
     ///
     /// # Panics
     ///
-    /// Panics if the DO_RATE_LIMIT variable are not specified in environment
+    /// Panics if the WORK_CHECK_INTERVAL variable are not specified in environment
     pub fn from_env() -> WorkerConfig {
-        let rate_limit = dotenv::var("DO_RATE_LIMIT")
+        let interval = dotenv::var("WORK_INTERVAL")
             .unwrap()
             .parse::<u64>()
             .unwrap();
 
-        WorkerConfig { rate_limit }
+        WorkerConfig { interval }
     }
 }

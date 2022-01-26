@@ -1,15 +1,24 @@
 //! Worker working.
 
-use tokio::task;
+use tokio::{
+    task,
+    time::{self, Duration},
+};
 
 use crate::digitalocean::models::app::App;
 use crate::worker::Worker;
 
 impl Worker {
-    // Initializes worker
+    // Gets to work!
     pub async fn work(&self) {
-        if let Err(e) = work(self).await {
-            log::warn!("{}", e);
+        let mut interval = time::interval(Duration::from_secs(self.config.interval));
+
+        loop {
+            if let Err(e) = work(self).await {
+                log::warn!("{}", e);
+            }
+
+            interval.tick().await;
         }
     }
 }
