@@ -28,11 +28,12 @@ pub async fn run() -> anyhow::Result<()> {
     // let telegram = Telegram::from_env().init().await.unwrap();
 
     // Create Worker instance
-    let _worker = Worker::from_env().init(digitalocean, database).await;
+    let worker = Worker::from_env().init(digitalocean, database).await;
 
     log::info!("deployments monitoring has been successfully run");
 
-    // worker.work().await.unwrap();
+    // Run monitoring
+    worker.work().await;
 
     // 0. При запуске программы:
     // 0.1 Создать все базы данных
@@ -40,10 +41,10 @@ pub async fn run() -> anyhow::Result<()> {
 
     // LOOP
 
-    // 1. Проверить существует ли база данных.
+    // 1. Проверить существует ли таблица.
 
     // НЕТ
-    // 1.1. Если нет, значит приложение новое, содать БД
+    // 1.1. Если нет, значит приложение новое, содать таблицу
     // 1.2. Послать сообщения о деплоях в Телеграм
     // 1.3. Создать БД
     // 1.4. Записать деплои в БД

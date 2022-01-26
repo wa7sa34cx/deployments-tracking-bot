@@ -2,47 +2,71 @@
 
 use tokio::task;
 
-use crate::database::Database;
-use crate::digitalocean::DigitalOcean;
-use crate::worker::{Worker, WorkerConfig};
+use crate::worker::Worker;
 
 impl Worker {
     // Initializes worker
-    pub async fn work(&self) -> anyhow::Result<Worker> {
-        let apps = digitalocean.apps().get().await?;
-
-        let mut handles = Vec::new();
-
-        for app in apps {
-            let dn = digitalocean.clone();
-            let db = database.clone();
-
-            let handle = task::spawn(async move {
-                db.table(&app.id).create().await.unwrap();
-
-                let deployments = dn.deployments().get(&app.id).await.unwrap();
-
-                let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
-                db.table(&app.id).write(data).await.unwrap();
-            });
-
-            handles.push(handle);
+    pub async fn work(&self) {
+        if let Err(e) = work(self).await {
+            log::warn!("{}", e);
         }
-
-        // Await for all tasks
-        for handle in handles {
-            handle.await?;
-        }
-
-        Ok(Worker {
-            digitalocean,
-            database,
-            config: self,
-        })
     }
 }
 
-// Polling every n secs
-fn _calculate_gap(rate_limit: u16, apps_num: u16) -> u16 {
-    60 / (rate_limit / 60 / (apps_num + 1)) + 5
+async fn work(worker: &Worker) -> anyhow::Result<()> {
+    let apps = worker.digitalocean.apps().get().await?;
+
+    let mut handles = Vec::new();
+
+    for app in apps {
+        let w = worker.clone();
+
+        let handle = task::spawn(async move {
+            if let Err(e) = task(w, &app.id).await {
+                log::warn!("{}", e);
+            }
+        });
+
+        handles.push(handle);
+    }
+
+    // Await for all tasks
+    for handle in handles {
+        handle.await?;
+    }
+
+    Ok(())
+}
+
+async fn task(worker: Worker, app_id: &str) -> anyhow::Result<()> {
+    // Check if the table exists
+    if !worker.database.table(app_id).exists() {
+        log::info!("A new App has been detected");
+
+        // Create a table
+        worker.database.table(app_id).create().await?;
+
+        // Get deployments
+        let deployments = worker.digitalocean.deployments().get(app_id).await?;
+
+        // Write data to the table
+        let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
+        worker.database.table(app_id).write(data).await?;
+
+        // Telegram!!!!!
+
+        return Ok(());
+    }
+
+    // Create a table
+    worker.database.table(app_id).create().await?;
+
+    // Get deployments
+    let deployments = worker.digitalocean.deployments().get(app_id).await?;
+
+    // Write data to the table
+    let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
+    worker.database.table(app_id).write(data).await?;
+
+    Ok(())
 }

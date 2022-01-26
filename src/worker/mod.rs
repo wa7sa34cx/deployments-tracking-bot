@@ -4,18 +4,22 @@ use crate::database::Database;
 use crate::digitalocean::DigitalOcean;
 
 pub mod init;
-// pub mod work;
+pub mod work;
 
-/// Worker
+/// Main Worker struct
+/// Cloning is cheap
+#[derive(Debug, Clone)]
 pub struct Worker {
-    digitalocean: DigitalOcean,
-    database: Database,
-    config: WorkerConfig,
+    pub digitalocean: DigitalOcean,
+    pub database: Database,
+    pub config: WorkerConfig,
 }
 
 /// Worker configuration
+/// Cloning is cheap
+#[derive(Debug, Clone)]
 pub struct WorkerConfig {
-    rate_limit: u64,
+    pub rate_limit: u64,
 }
 
 impl Worker {

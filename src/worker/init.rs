@@ -9,29 +9,30 @@ use crate::worker::{Worker, WorkerConfig};
 impl WorkerConfig {
     // Initializes worker
     pub async fn init(self, digitalocean: DigitalOcean, database: Database) -> Worker {
-        if let Err(e) = init(digitalocean.clone(), database.clone()).await {
-            log::warn!("{}", e);
-        }
-
-        Worker {
+        let worker = Worker {
             digitalocean,
             database,
             config: self,
+        };
+
+        if let Err(e) = init(worker.clone()).await {
+            log::warn!("{}", e);
         }
+
+        worker
     }
 }
 
-async fn init(digitalocean: DigitalOcean, database: Database) -> anyhow::Result<()> {
-    let apps = digitalocean.apps().get().await?;
+async fn init(worker: Worker) -> anyhow::Result<()> {
+    let apps = worker.digitalocean.apps().get().await?;
 
     let mut handles = Vec::new();
 
     for app in apps {
-        let dn = digitalocean.clone();
-        let db = database.clone();
+        let w = worker.clone();
 
         let handle = task::spawn(async move {
-            if let Err(e) = task(dn, db, &app.id).await {
+            if let Err(e) = task(w, &app.id).await {
                 log::warn!("{}", e);
             }
         });
@@ -47,16 +48,16 @@ async fn init(digitalocean: DigitalOcean, database: Database) -> anyhow::Result<
     Ok(())
 }
 
-async fn task(digitalocean: DigitalOcean, database: Database, app_id: &str) -> anyhow::Result<()> {
+async fn task(worker: Worker, app_id: &str) -> anyhow::Result<()> {
     // Create a table
-    database.table(app_id).create().await?;
+    worker.database.table(app_id).create().await?;
 
     // Get deployments
-    let deployments = digitalocean.deployments().get(app_id).await?;
+    let deployments = worker.digitalocean.deployments().get(app_id).await?;
 
-    // Write to the talbe
+    // Write data to the table
     let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
-    database.table(app_id).write(data).await?;
+    worker.database.table(app_id).write(data).await?;
 
     Ok(())
 }
