@@ -12,7 +12,7 @@ impl Worker {
     /// Gets to work!
     pub async fn work(&self) {
         log::info!("deployments monitoring has been successfully run");
-        
+
         let mut interval = time::interval(Duration::from_secs(self.config.interval));
 
         loop {
@@ -22,7 +22,7 @@ impl Worker {
 
             if let Err(e) = work(self).await {
                 log::warn!("{}", e);
-            }            
+            }
         }
     }
 }

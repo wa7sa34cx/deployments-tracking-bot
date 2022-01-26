@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde_derive::Deserialize;
-use std::fmt;
+use std::{fmt, path::PathBuf};
+use tokio::fs;
 
 use crate::digitalocean::models::app::App;
 
@@ -55,15 +56,39 @@ impl fmt::Display for Phase {
     }
 }
 
+/// Type of message
+pub enum MsgType {
+    Telegram,
+}
 
-// impl Deployment {
-//     pub fn message(&self) -> String {
-//         format!("🏗 New deployment has been detected\n
-//         App: {}\n
-//         Status: {}\n
-//         Cause: {}\n
-//         Updated at: {}\n
-//         Took time: {}\n\n
-//         ", self.app.name)
-//     }
-// }
+impl Deployment {
+    pub async fn message(&self, msg_type: MsgType) -> anyhow::Result<String> {
+        let path = dotenv::var("MSG_PATH").unwrap_or("./messages/".to_string());
+        let mut file = PathBuf::from(path);
+
+        match msg_type {
+            MsgType::Telegram => file.push("telegram.txt"),
+        }
+
+        // Read from the file
+        let contents = fs::read_to_string(file).await?;
+
+        // Prepare some replacements
+        let error_message = self.error.message.as_deref().unwrap_or_else(|| "");
+        let error_action = self.error.action.as_deref().unwrap_or_else(|| "");
+        let updated_at = self.updated_at.format("%H:%M:%S %B %d, %Y UTC").to_string();
+
+        let message = contents
+            .replace("{app_id}", &self.app.name)
+            .replace("{status}", &format!("{}", &self.phase))
+            .replace("{cause}", &self.cause)
+            .replace("{updated_at}", &updated_at)
+            .replace("{took_time}", &self.took_time)
+            .replace("{error_message}", error_message)
+            .replace("{error_action}", error_action)
+            .trim()
+            .to_string();
+
+        Ok(message)
+    }
+}
