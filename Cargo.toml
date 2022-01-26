@@ -1,6 +1,6 @@
 [package]
 name = "telegram-devops-bot"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 keywords = ["digitalocean", "telegram", "devops"]
 readme = "README.md"
