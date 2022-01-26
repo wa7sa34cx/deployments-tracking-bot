@@ -1,11 +1,18 @@
-//! Worker working.
+//! Heavy Hard Work Module.
+//! 
+//! A lot of people failed at what you accomplished, 
+//! simply because they were busy finding problems
+//! while you were busy finding solutions. Well done.
 
 use tokio::{
     task,
     time::{self, Duration},
 };
 
-use crate::digitalocean::models::{app::App, deployment::MsgType};
+use crate::digitalocean::models::{
+    app::App,
+    deployment::{Deployment, MsgType},
+};
 use crate::worker::Worker;
 
 impl Worker {
@@ -15,6 +22,7 @@ impl Worker {
 
         let mut interval = time::interval(Duration::from_secs(self.config.interval));
 
+        // Main worker loop
         loop {
             interval.tick().await;
 
@@ -59,26 +67,6 @@ async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
 
         // Create a table
         worker.database.table(&app.id).create().await?;
-
-        // Get deployments
-        let deployments = worker.digitalocean.deployments().get(&app).await?;
-
-        // Write data to the table
-        let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
-        worker.database.table(&app.id).write(data).await?;
-
-        // Telegram!!!!!
-        // Send last deployment
-        let deployment = deployments
-            .get(0)
-            .ok_or_else(|| anyhow::anyhow!("where did the deployment go?"))?;
-
-        log::info!("a new deployment ({}) has been detected", &deployment.id);
-
-        let message = deployment.message(MsgType::Telegram).await?;
-        println!("{}", message);
-
-        return Ok(());
     }
 
     // Get deployments
@@ -86,21 +74,27 @@ async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
 
     // Get deployments from table
     let deployments_current = worker.database.table(&app.id).read().await?;
-
+    
     // Search for new deployments and send notification
     for deployment in deployments.iter() {
         if !deployments_current.contains(&deployment.id) {
             log::info!("a new deployment ({}) has been detected", &deployment.id);
-
-            // Telegram!!!!!
-            let message = deployment.message(MsgType::Telegram).await?;
-            println!("{}", message);
+            send_message(&deployment).await?;
         }
     }
 
     // Write data to the table
     let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
     worker.database.table(&app.id).write(data).await?;
+
+    Ok(())
+}
+
+// Sends notifications
+async fn send_message(deployment: &Deployment) -> anyhow::Result<()> {
+    // Send message to Telegram
+    let message = deployment.message(MsgType::Telegram).await?;
+    println!("{}", message);
 
     Ok(())
 }
