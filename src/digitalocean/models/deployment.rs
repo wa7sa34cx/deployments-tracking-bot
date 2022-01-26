@@ -46,10 +46,10 @@ impl fmt::Display for Phase {
             Phase::Building => "🏗 Building",
             Phase::PendingDeploy => "🏗 Pending deploy",
             Phase::Deploying => "🏗 Deploying",
-            Phase::Active => "✅ Live",
-            Phase::Superseded => "🔷 Superseded",
-            Phase::Error => "🚨 Faild",
-            Phase::Canceled => "❌ Canceled",
+            Phase::Active => "✅ Deployment Live",
+            Phase::Superseded => "🔷 Deployment Superseded",
+            Phase::Error => "🚨 Deployment Failed",
+            Phase::Canceled => "❌ Deployment Canceled",
         };
 
         write!(f, "{}", printable)
@@ -75,17 +75,22 @@ impl Deployment {
 
         // Prepare some replacements
         let error_message = self.error.message.as_deref().unwrap_or_else(|| "");
-        let error_action = self.error.action.as_deref().unwrap_or_else(|| "");
+        let error_action = self
+            .error
+            .action
+            .as_deref()
+            .map(|s| format!("{} 🛠", s))
+            .unwrap_or_else(|| "".to_string());
         let updated_at = self.updated_at.format("%H:%M:%S %B %d, %Y UTC").to_string();
 
         let message = contents
-            .replace("{app_id}", &self.app.name)
+            .replace("{app_name}", &self.app.name)
             .replace("{status}", &format!("{}", &self.phase))
             .replace("{cause}", &self.cause)
             .replace("{updated_at}", &updated_at)
             .replace("{took_time}", &self.took_time)
-            .replace("{error_message}", error_message)
-            .replace("{error_action}", error_action)
+            .replace("{error_message}", &error_message)
+            .replace("{error_action}", &error_action)
             .trim()
             .to_string();
 
