@@ -19,6 +19,8 @@ impl WorkerConfig {
             log::warn!("{}", e);
         }
 
+        log::info!("deployments monitoring has been successfully run");
+        
         worker
     }
 }
