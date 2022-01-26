@@ -73,7 +73,7 @@ impl DeploymentsHandler {
                     && d.updated_at.is_some()
             })
             .filter(|d| match d.phase.as_ref().unwrap() {
-                Phase::Active | Phase::Superseded | Phase::Error | Phase::Canceled => true,
+                Phase::Active | Phase::Error | Phase::Canceled => true,
                 _ => false,
             })
             .map(|d| Deployment {
