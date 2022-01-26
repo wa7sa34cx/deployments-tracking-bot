@@ -2,6 +2,7 @@
 
 use tokio::task;
 
+use crate::digitalocean::models::app::App;
 use crate::worker::Worker;
 
 impl Worker {
@@ -22,7 +23,7 @@ async fn work(worker: &Worker) -> anyhow::Result<()> {
         let w = worker.clone();
 
         let handle = task::spawn(async move {
-            if let Err(e) = task(w, &app.id).await {
+            if let Err(e) = task(w, app).await {
                 log::warn!("{}", e);
             }
         });
@@ -38,35 +39,44 @@ async fn work(worker: &Worker) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn task(worker: Worker, app_id: &str) -> anyhow::Result<()> {
+async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
     // Check if the table exists
-    if !worker.database.table(app_id).exists() {
-        log::info!("A new App has been detected");
+    if !worker.database.table(&app.id).exists() {
+        log::info!("a new App ({}) has been detected", &app.id);
 
         // Create a table
-        worker.database.table(app_id).create().await?;
+        worker.database.table(&app.id).create().await?;
 
         // Get deployments
-        let deployments = worker.digitalocean.deployments().get(app_id).await?;
+        let deployments = worker.digitalocean.deployments().get(&app).await?;
 
         // Write data to the table
         let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
-        worker.database.table(app_id).write(data).await?;
+        worker.database.table(&app.id).write(data).await?;
 
         // Telegram!!!!!
 
         return Ok(());
     }
 
-    // Create a table
-    worker.database.table(app_id).create().await?;
-
     // Get deployments
-    let deployments = worker.digitalocean.deployments().get(app_id).await?;
+    let deployments = worker.digitalocean.deployments().get(&app).await?;
+
+    // Get deployments from table
+    let deployments_current = worker.database.table(&app.id).read().await?;
+
+    // Search for new deployments
+    for deployment in deployments.iter() {
+        if !deployments_current.contains(&deployment.id) {
+            log::info!("A new deployment ({}) has been detected", &deployment.id);
+
+            // Telegram!!!!!
+        }
+    }
 
     // Write data to the table
     let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
-    worker.database.table(app_id).write(data).await?;
+    worker.database.table(&app.id).write(data).await?;
 
     Ok(())
 }

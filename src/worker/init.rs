@@ -3,7 +3,7 @@
 use tokio::task;
 
 use crate::database::Database;
-use crate::digitalocean::DigitalOcean;
+use crate::digitalocean::{models::app::App, DigitalOcean};
 use crate::worker::{Worker, WorkerConfig};
 
 impl WorkerConfig {
@@ -32,7 +32,7 @@ async fn init(worker: Worker) -> anyhow::Result<()> {
         let w = worker.clone();
 
         let handle = task::spawn(async move {
-            if let Err(e) = task(w, &app.id).await {
+            if let Err(e) = task(w, &app).await {
                 log::warn!("{}", e);
             }
         });
@@ -48,16 +48,16 @@ async fn init(worker: Worker) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn task(worker: Worker, app_id: &str) -> anyhow::Result<()> {
+async fn task(worker: Worker, app: &App) -> anyhow::Result<()> {
     // Create a table
-    worker.database.table(app_id).create().await?;
+    worker.database.table(&app.id).create().await?;
 
     // Get deployments
-    let deployments = worker.digitalocean.deployments().get(app_id).await?;
+    let deployments = worker.digitalocean.deployments().get(app).await?;
 
     // Write data to the table
     let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
-    worker.database.table(app_id).write(data).await?;
+    worker.database.table(&app.id).write(data).await?;
 
     Ok(())
 }

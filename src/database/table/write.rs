@@ -11,7 +11,7 @@ impl Table {
         let contents = lines.join("\n");
 
         // Write to the file
-        fs::write(&self.file, &contents).await?;
+        fs::write(&self.file, contents).await?;
 
         log::debug!("data to table {} has been successfully written", self.name);
 

@@ -8,7 +8,10 @@ use serde_derive::Deserialize;
 use crate::digitalocean::{
     deployments::DeploymentsHandler,
     error::ErrorResponse,
-    models::deployment::{Deployment, DeploymentError, Phase},
+    models::{
+        app::App,
+        deployment::{Deployment, DeploymentError, Phase},
+    },
 };
 
 // https://docs.digitalocean.com/reference/api/api-reference/#operation/list_deployments
@@ -49,8 +52,8 @@ pub struct Reason {
 
 impl DeploymentsHandler {
     /// Gets a list of all deployments of the app
-    pub async fn get(&self, app_id: &str) -> anyhow::Result<Vec<Deployment>> {
-        let json = get_json(self, app_id).await?;
+    pub async fn get(&self, app: &App) -> anyhow::Result<Vec<Deployment>> {
+        let json = get_json(self, app).await?;
 
         if json.deployments.is_none() {
             return Err(anyhow::anyhow!(
@@ -75,6 +78,7 @@ impl DeploymentsHandler {
             })
             .map(|d| Deployment {
                 id: d.id.unwrap(),
+                app: app.clone(),
                 cause: d.cause.unwrap(),
                 phase: d.phase.unwrap(),
                 created_at: d.created_at.unwrap(),
@@ -85,13 +89,19 @@ impl DeploymentsHandler {
             })
             .collect();
 
+        if deployments.len() == 0 {
+            return Err(anyhow::anyhow!(
+                "there are no deployments with required fields 🤷‍♂️"
+            ));
+        }
+
         Ok(deployments)
     }
 }
 
 // Gets json data from DigitalOcean API
-async fn get_json(handler: &DeploymentsHandler, app_id: &str) -> anyhow::Result<JsonResponse> {
-    let url = handler.url.replace("{app_id}", app_id);
+async fn get_json(handler: &DeploymentsHandler, app: &App) -> anyhow::Result<JsonResponse> {
+    let url = handler.url.replace("{app_id}", &app.id);
 
     let res = handler
         .digitalocean
