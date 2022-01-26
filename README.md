@@ -1,4 +1,4 @@
-# telegram-devops-bot
+# deployments-tracking-bot
 
 Fill me up, pls!
 
