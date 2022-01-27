@@ -36,9 +36,13 @@ impl TelegramConfig {
         if !json.ok {
             return anyhow::anyhow!("token authentication failed");
         }
-        
+
         match json.result {
-            Some(r) => if !r.is_bot { return anyhow::anyhow!("this is not a bot") },
+            Some(r) => {
+                if !r.is_bot {
+                    return anyhow::anyhow!("this is not a bot");
+                }
+            }
             None => return anyhow::anyhow!("what the heck?"),
         }
 

@@ -1,5 +1,5 @@
 //! Telegram module.
-//! 
+//!
 //! A new era of messaging 💬
 
 use reqwest::Client;
