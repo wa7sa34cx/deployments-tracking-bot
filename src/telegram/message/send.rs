@@ -3,7 +3,7 @@
 use reqwest::header;
 use serde_derive::{Serialize, Deserialize};
 
-use crate::telegram::{message::MessageHandler, Telegram};
+use crate::telegram::message::MessageHandler;
 
 // https://core.telegram.org/bots/api#sendmessage
 #[derive(Debug, Serialize, Deserialize)]
