@@ -1,6 +1,6 @@
 [package]
 name = "deployments-tracking-bot"
-version = "0.1.5"
+version = "0.1.7"
 edition = "2021"
 keywords = ["digitalocean", "telegram", "devops"]
 readme = "README.md"
@@ -23,7 +23,6 @@ anyhow = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
 dotenv = "0.15"
 humantime = "2.1"
-thiserror = "1.0"
 
 log = "0.4"
 simplelog = "0.11"
