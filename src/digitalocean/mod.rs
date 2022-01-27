@@ -10,6 +10,8 @@ pub mod error;
 pub mod init;
 pub mod models;
 
+static DO_API_URL: &str = "https://api.digitalocean.com/v2/";
+
 /// Main DigitalOcean struct
 #[derive(Debug)]
 pub struct DigitalOcean(Arc<DigitalOceanConfig>);
@@ -17,6 +19,7 @@ pub struct DigitalOcean(Arc<DigitalOceanConfig>);
 /// DigitalOcean configuration
 #[derive(Debug)]
 pub struct DigitalOceanConfig {
+    api_url: &'static str,
     token: String,
     client: Client,
 }
@@ -42,11 +45,12 @@ impl DigitalOcean {
     ///
     /// Panics if the DO_TOKEN variable are not specified in environment
     pub fn from_env() -> DigitalOceanConfig {
+        let api_url = DO_API_URL;
         let token = dotenv::var("DO_TOKEN").unwrap();
 
         // Create keep-alive HTTP connection pool
         let client = Client::new();
 
-        DigitalOceanConfig { token, client }
+        DigitalOceanConfig { api_url, token, client }
     }
 }

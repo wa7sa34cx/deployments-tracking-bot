@@ -6,7 +6,7 @@ use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
 
 use crate::digitalocean::{
-    deployments::DeploymentsHandler,
+    handler::Handler,
     error::ErrorResponse,
     models::{
         app::App,
@@ -73,7 +73,7 @@ impl DeploymentsHandler {
                     && d.updated_at.is_some()
             })
             .filter(|d| match d.phase.as_ref().unwrap() {
-                Phase::Active | Phase::Error | Phase::Canceled => true,
+                Phase::Active | Phase::Error => true,
                 _ => false,
             })
             .map(|d| Deployment {
@@ -101,7 +101,7 @@ impl DeploymentsHandler {
 
 // Gets json data from DigitalOcean API
 async fn get_json(handler: &DeploymentsHandler, app: &App) -> anyhow::Result<JsonResponse> {
-    let url = handler.url.replace("{app_id}", &app.id);
+    let url = handler.api_url.replace("{app_id}", &app.id);
 
     let res = handler
         .digitalocean

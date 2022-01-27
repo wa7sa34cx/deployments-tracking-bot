@@ -49,6 +49,7 @@ impl DigitalOceanConfig {
             Status::Active => {
                 log::debug!("working with DigitalOcean API has been successfully initialized");
                 Ok(DigitalOcean(Arc::new(DigitalOceanConfig {
+                    api_url: self.api_url,
                     token: self.token,
                     client: self.client,
                 })))
