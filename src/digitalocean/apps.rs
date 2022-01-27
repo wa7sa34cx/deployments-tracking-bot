@@ -4,6 +4,7 @@ use crate::digitalocean::DigitalOcean;
 
 pub mod get;
 
+/// Apps handler
 #[derive(Debug)]
 pub struct AppsHandler {
     pub digitalocean: DigitalOcean,
