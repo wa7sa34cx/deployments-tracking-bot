@@ -76,16 +76,20 @@ async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
     let deployments_current = worker.database.table(&app.id).read().await?;
     
     // Search for new deployments and send notification
+    let mut was_found = false;
     for deployment in deployments.iter() {
         if !deployments_current.contains(&deployment.id) {
             log::info!("a new deployment ({}) has been detected", &deployment.id);
             send_message(&deployment).await?;
+            was_found = true;
         }
     }
 
-    // Write data to the table
-    let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
-    worker.database.table(&app.id).write(data).await?;
+    // Write new data to the table if new deployments was found
+    if was_found {
+        let data: Vec<&str> = deployments.iter().map(|d| d.id.as_str()).collect();
+        worker.database.table(&app.id).write(data).await?;
+    }
 
     Ok(())
 }
