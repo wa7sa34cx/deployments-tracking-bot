@@ -4,6 +4,7 @@ use crate::digitalocean::DigitalOcean;
 
 pub mod get;
 
+/// Deployments handler
 #[derive(Debug)]
 pub struct DeploymentsHandler {
     pub digitalocean: DigitalOcean,
