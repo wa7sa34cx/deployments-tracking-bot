@@ -7,6 +7,7 @@ use std::ops::Deref;
 use std::sync::Arc;
 
 pub mod init;
+pub mod message;
 
 static TG_BOT_API_URL: &str = "https://api.telegram.org/bot";
 
@@ -18,6 +19,7 @@ pub struct Telegram(Arc<TelegramConfig>);
 #[derive(Debug)]
 pub struct TelegramConfig {
     api_url: String,
+    chat_id: i64,
     client: Client,
 }
 
@@ -47,9 +49,14 @@ impl Telegram {
         // https://core.telegram.org/bots/api#making-requests
         let api_url = format!("{}{}/", TG_BOT_API_URL, &token);
 
+        let chat_id = dotenv::var("TG_CHAT_ID")
+            .unwrap()
+            .parse::<i64>()
+            .unwrap();
+
         // Create keep-alive HTTP connection pool
         let client = Client::new();
 
-        TelegramConfig { api_url, client }
+        TelegramConfig { api_url, chat_id, client }
     }
 }

@@ -46,8 +46,11 @@ impl TelegramConfig {
             None => return anyhow::anyhow!("what the heck?"),
         }
 
+        log::debug!("working with Telegram API has been successfully initialized");
+
         Ok(Telegram(Arc::new(TelegramConfig {
             api_url: self.api_url,
+            chat_id: self.chat_id,
             client: self.client,
         })))
     }
