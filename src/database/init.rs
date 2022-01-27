@@ -7,7 +7,7 @@ use tokio::fs;
 use crate::database::{Database, DatabaseConfig};
 
 impl DatabaseConfig {
-    // Initializes database
+    /// Initializes database
     pub async fn init(self) -> Result<Database, io::Error> {
         // Remove the old database
         match fs::remove_dir_all(&self.path).await {
