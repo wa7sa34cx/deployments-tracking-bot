@@ -23,7 +23,7 @@ pub struct User {
 impl TelegramConfig {
     // Initializes working with Telegram API, checks bot status
     pub async fn init(self) -> anyhow::Result<Telegram> {
-        let url = format!("{}getMe", &self.url);
+        let url = format!("{}getMe", &self.api_url);
 
         let json = self
             .client
@@ -43,7 +43,7 @@ impl TelegramConfig {
         }
 
         Ok(Telegram(Arc::new(TelegramConfig {
-            url: self.url,
+            api_url: self.api_url,
             client: self.client,
         })))
     }

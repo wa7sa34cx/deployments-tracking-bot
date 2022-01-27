@@ -17,7 +17,7 @@ pub struct Telegram(Arc<TelegramConfig>);
 /// Telegram configuration
 #[derive(Debug)]
 pub struct TelegramConfig {
-    url: String,
+    api_url: String,
     client: Client,
 }
 
@@ -45,11 +45,11 @@ impl Telegram {
         let token = dotenv::var("TG_TOKEN").unwrap();
 
         // https://core.telegram.org/bots/api#making-requests
-        let url = format!("{}{}/", TG_BOT_API_URL, &token);
+        let api_url = format!("{}{}/", TG_BOT_API_URL, &token);
 
         // Create keep-alive HTTP connection pool
         let client = Client::new();
 
-        TelegramConfig { url, client }
+        TelegramConfig { api_url, client }
     }
 }
