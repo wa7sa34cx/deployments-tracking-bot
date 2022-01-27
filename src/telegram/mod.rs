@@ -42,7 +42,7 @@ impl Telegram {
     ///
     /// # Panics
     ///
-    /// Panics if the TG_TOKEN variable are not specified in environment
+    /// Panics if the TG_TOKEN or TG_CHAT_ID variable are not specified in environment
     pub fn from_env() -> TelegramConfig {
         let token = dotenv::var("TG_TOKEN").unwrap();
 

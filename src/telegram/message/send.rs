@@ -1,5 +1,6 @@
 //! Sending message to the Telegram bot.
 
+use reqwest::header;
 use serde_derive::{Serialize, Deserialize};
 
 use crate::telegram::{message::MessageHandler, Telegram};
@@ -7,7 +8,7 @@ use crate::telegram::{message::MessageHandler, Telegram};
 // https://core.telegram.org/bots/api#sendmessage
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SendMessage {
-    pub chat_id: String,
+    pub chat_id: i64,
     pub text: String,
 }
 
@@ -30,10 +31,17 @@ impl MessageHandler {
     pub async fn send(&self) -> anyhow::Result<()> {
         let url = format!("{}sendMessage", &self.telegram.api_url);
 
+        let message = SendMessage {
+            chat_id: self.telegram.chat_id,
+            text: self.message,
+        };
+
         let json = self
             .telegram
             .client
             .post(&url)
+            .header(header::CONTENT_TYPE, "application/json")
+            .json(&message)
             .send()
             .await?
             .json::<JsonResponse>()
