@@ -1,5 +1,5 @@
 //! Worker initialization.
-//! 
+//!
 //! The secret to success is to treat any job as an opportunity to explore,
 //! rather than something that is a boring chore.
 

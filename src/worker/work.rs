@@ -1,6 +1,6 @@
 //! Heavy Hard Work Module.
-//! 
-//! A lot of people failed at what you accomplished, 
+//!
+//! A lot of people failed at what you accomplished,
 //! simply because they were busy finding problems
 //! while you were busy finding solutions. Well done.
 
@@ -74,7 +74,7 @@ async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
 
     // Get deployments from table
     let deployments_current = worker.database.table(&app.id).read().await?;
-    
+
     // Search for new deployments and send notification
     let mut was_found = false;
     for deployment in deployments.iter() {
