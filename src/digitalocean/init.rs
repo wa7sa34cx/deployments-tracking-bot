@@ -27,7 +27,7 @@ pub enum Status {
 }
 
 impl DigitalOceanConfig {
-    // Initializes working with DigitalOcean API, checks account status
+    /// Initializes working with DigitalOcean API, checks account status
     pub async fn init(self) -> anyhow::Result<DigitalOcean> {
         let res = self
             .client

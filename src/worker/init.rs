@@ -10,7 +10,7 @@ use crate::digitalocean::{models::app::App, DigitalOcean};
 use crate::worker::{Worker, WorkerConfig};
 
 impl WorkerConfig {
-    // Initializes worker
+    /// Initializes worker
     pub async fn init(self, digitalocean: DigitalOcean, database: Database) -> Worker {
         let worker = Worker {
             digitalocean,

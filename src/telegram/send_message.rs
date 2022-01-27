@@ -1,27 +1,27 @@
-//! Telegram initialization.
+//! Send text message.
 
 use serde_derive::Deserialize;
 use std::sync::Arc;
 
-use crate::telegram::{Telegram, TelegramConfig};
+use crate::telegram::Telegram;
 
 // https://core.telegram.org/bots/api#making-requests
 #[derive(Debug, Deserialize)]
 pub struct JsonResponse {
     pub ok: bool,
-    pub result: Option<User>,
+    pub result: Option<Message>,
     pub description: Option<String>,
 }
 
-// https://core.telegram.org/bots/api#user
+// https://core.telegram.org/bots/api#message
 #[derive(Debug, Deserialize)]
 pub struct User {
     pub id: i64,
     pub is_bot: bool,
 }
 
-impl TelegramConfig {
-    /// Initializes working with Telegram API, checks bot status
+impl Telegram {
+    // Initializes working with Telegram API, checks bot status
     pub async fn init(self) -> anyhow::Result<Telegram> {
         let url = format!("{}getMe", &self.api_url);
 
