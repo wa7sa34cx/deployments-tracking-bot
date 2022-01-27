@@ -51,6 +51,10 @@ impl DigitalOcean {
         // Create keep-alive HTTP connection pool
         let client = Client::new();
 
-        DigitalOceanConfig { api_url, token, client }
+        DigitalOceanConfig {
+            api_url,
+            token,
+            client,
+        }
     }
 }

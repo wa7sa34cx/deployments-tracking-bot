@@ -6,7 +6,7 @@ use reqwest::{header, StatusCode};
 use serde_derive::Deserialize;
 
 use crate::digitalocean::{
-    handler::Handler,
+    deployments::DeploymentsHandler,
     error::ErrorResponse,
     models::{
         app::App,
@@ -30,7 +30,7 @@ pub struct JsonDeployment {
     pub progress: Option<Progress>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default)]
 pub struct Progress {
     pub success_steps: Option<u32>,
     pub error_steps: Option<u32>,
@@ -48,6 +48,23 @@ pub struct SummarySteps {
 pub struct Reason {
     pub code: Option<String>,
     pub message: Option<String>,
+}
+
+// Creates DeploymentError from Progress
+impl Progress {
+    fn create_error(&self) -> anyhow::Result<DeploymentError> {
+        let summary = self
+            .summary_steps
+            .ok_or_else(|| anyhow::anyhow!("summary_steps is None"))?
+            .into_iter()
+            .nth(0)
+            .ok_or_else(|| anyhow::anyhow!("summary_steps contains no elements"))?;
+
+        let message = summary.reason.map_or(None, |r| r.message);
+        let action = summary.message_base;
+
+        Ok(DeploymentError { message, action })
+    }
 }
 
 impl DeploymentsHandler {
@@ -85,7 +102,11 @@ impl DeploymentsHandler {
                 updated_at: d.updated_at.unwrap(),
                 took_time: took_time(d.created_at.unwrap(), d.updated_at.unwrap())
                     .unwrap_or("unknown".to_string()),
-                error: create_error(d.progress).unwrap_or(DeploymentError::default()),
+                error: d
+                    .progress
+                    .unwrap_or(Progress::default())
+                    .create_error()
+                    .unwrap_or(DeploymentError::default()),
             })
             .collect();
 
@@ -128,30 +149,4 @@ async fn get_json(handler: &DeploymentsHandler, app: &App) -> anyhow::Result<Jso
 // Calculates the took time
 fn took_time(start: DateTime<Utc>, end: DateTime<Utc>) -> anyhow::Result<String> {
     Ok(format_duration((end - start).to_std()?).to_string())
-}
-
-#[derive(thiserror::Error, Debug)]
-enum CreateError {
-    #[error("progress is None")]
-    ProgressNone,
-    #[error("summary_steps is None")]
-    SummaryStepsNone,
-    #[error("summary_steps contains no elements")]
-    NoElements,
-}
-
-// Creates DeploymentError from Progress
-fn create_error(progress: Option<Progress>) -> anyhow::Result<DeploymentError> {
-    let summary = progress
-        .ok_or_else(|| CreateError::ProgressNone)?
-        .summary_steps
-        .ok_or_else(|| CreateError::SummaryStepsNone)?
-        .into_iter()
-        .nth(0)
-        .ok_or_else(|| CreateError::NoElements)?;
-
-    let message = summary.reason.map_or(None, |r| r.message);
-    let action = summary.message_base;
-
-    Ok(DeploymentError { message, action })
 }
