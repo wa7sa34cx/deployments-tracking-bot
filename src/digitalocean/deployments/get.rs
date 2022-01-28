@@ -97,7 +97,6 @@ impl DeploymentsHandler {
             })
             .map(|d| Deployment {
                 id: d.id.unwrap(),
-                // TODO: get rid of clone here
                 app: app.clone(),
                 cause: d.cause.unwrap(),
                 phase: d.phase.unwrap(),
