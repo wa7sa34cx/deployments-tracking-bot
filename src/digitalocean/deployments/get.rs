@@ -59,8 +59,11 @@ impl Progress {
             .into_iter()
             .nth(0)
             .ok_or_else(|| anyhow::anyhow!("summary_steps contains no elements"))?;
-     
-        let SummarySteps { reason, message_base } = summary;
+
+        let SummarySteps {
+            reason,
+            message_base,
+        } = summary;
 
         let message = reason.map(|r| r.message).unwrap_or(None);
         let action = message_base;

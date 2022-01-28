@@ -49,14 +49,15 @@ impl Telegram {
         // https://core.telegram.org/bots/api#making-requests
         let api_url = format!("{}{}/", TG_BOT_API_URL, &token);
 
-        let chat_id = dotenv::var("TG_CHAT_ID")
-            .unwrap()
-            .parse::<i64>()
-            .unwrap();
+        let chat_id = dotenv::var("TG_CHAT_ID").unwrap().parse::<i64>().unwrap();
 
         // Create keep-alive HTTP connection pool
         let client = Client::new();
 
-        TelegramConfig { api_url, chat_id, client }
+        TelegramConfig {
+            api_url,
+            chat_id,
+            client,
+        }
     }
 }

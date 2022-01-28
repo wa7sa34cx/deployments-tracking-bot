@@ -99,7 +99,7 @@ async fn send_messages(worker: &Worker, deployment: &Deployment) -> anyhow::Resu
     // 1. Send message to Telegram
     let message = deployment.message(MsgType::Telegram).await?;
     worker.telegram.message(&message).send().await?;
-    
+
     log::info!(
         "message about deployment ({}) has been successfully send to Telegram bot",
         &deployment.id

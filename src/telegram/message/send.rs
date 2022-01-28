@@ -1,7 +1,7 @@
 //! Sending message to the Telegram bot.
 
 use reqwest::header;
-use serde_derive::{Serialize, Deserialize};
+use serde_derive::{Deserialize, Serialize};
 
 use crate::telegram::message::MessageHandler;
 
@@ -48,9 +48,9 @@ impl MessageHandler {
             .await?;
 
         if !json.ok {
-            return Err(anyhow::anyhow!(json
-                .description
-                .unwrap_or_else(|| "can't send message for unknown reason".to_string())));
+            return Err(anyhow::anyhow!(json.description.unwrap_or_else(|| {
+                "can't send message for unknown reason".to_string()
+            })));
         }
 
         log::debug!(

@@ -26,16 +26,15 @@ pub async fn run() -> anyhow::Result<()> {
     let database = Database::from_env().init().await?;
 
     // Create Telegram instance
-    let telegram = Telegram::from_env().init().await.unwrap();
+    let telegram = Telegram::from_env().init().await?;
 
     // Create Worker instance
-    let worker = Worker::from_env().init(digitalocean, database, telegram).await;
+    let worker = Worker::from_env()
+        .init(digitalocean, database, telegram)
+        .await;
 
     // Run monitoring
     worker.work().await;
-
-    let telegram = Telegram::from_env().init().await?;
-    telegram.message("123").send().await?;
 
     Ok(())
 }

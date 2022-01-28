@@ -7,12 +7,17 @@ use tokio::task;
 
 use crate::database::Database;
 use crate::digitalocean::{models::app::App, DigitalOcean};
-use crate::worker::{Worker, WorkerConfig};
 use crate::telegram::Telegram;
+use crate::worker::{Worker, WorkerConfig};
 
 impl WorkerConfig {
     /// Initializes worker
-    pub async fn init(self, digitalocean: DigitalOcean, database: Database, telegram: Telegram) -> Worker {
+    pub async fn init(
+        self,
+        digitalocean: DigitalOcean,
+        database: Database,
+        telegram: Telegram,
+    ) -> Worker {
         let worker = Worker {
             digitalocean,
             database,
