@@ -80,7 +80,7 @@ async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
     for deployment in deployments.iter() {
         if !deployments_current.contains(&deployment.id) {
             log::info!("a new deployment ({}) has been detected", &deployment.id);
-            send_messages(&deployment).await?;
+            send_messages(&worker, &deployment).await?;
             was_found = true;
         }
     }
@@ -95,10 +95,11 @@ async fn task(worker: Worker, app: App) -> anyhow::Result<()> {
 }
 
 // Sends messages
-async fn send_messages(deployment: &Deployment) -> anyhow::Result<()> {
+async fn send_messages(worker: &Worker, deployment: &Deployment) -> anyhow::Result<()> {
     // 1. Send message to Telegram
     let message = deployment.message(MsgType::Telegram).await?;
-    // worker.telegram.message(&message).send().await?;
+    worker.telegram.message(&message).send().await?;
+    
     log::info!(
         "message about deployment ({}) has been successfully send to Telegram bot",
         &deployment.id

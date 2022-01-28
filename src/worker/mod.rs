@@ -2,6 +2,7 @@
 
 use crate::database::Database;
 use crate::digitalocean::DigitalOcean;
+use crate::telegram::Telegram;
 
 pub mod init;
 pub mod work;
@@ -12,6 +13,7 @@ pub mod work;
 pub struct Worker {
     pub digitalocean: DigitalOcean,
     pub database: Database,
+    pub telegram: Telegram,
     pub config: WorkerConfig,
 }
 
