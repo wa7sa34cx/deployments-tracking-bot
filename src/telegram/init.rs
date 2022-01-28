@@ -34,16 +34,16 @@ impl TelegramConfig {
             .await?;
 
         if !json.ok {
-            return anyhow::anyhow!("token authentication failed");
+            return Err(anyhow::anyhow!("token authentication failed"));
         }
 
         match json.result {
             Some(r) => {
                 if !r.is_bot {
-                    return anyhow::anyhow!("this is not a bot");
+                    return Err(anyhow::anyhow!("this is not a bot"));
                 }
             }
-            None => return anyhow::anyhow!("what the heck?"),
+            None => return Err(anyhow::anyhow!("what the heck?")),
         }
 
         log::debug!("working with Telegram API has been successfully initialized");

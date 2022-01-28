@@ -34,7 +34,8 @@ pub async fn run() -> anyhow::Result<()> {
     // // Run monitoring
     // worker.work().await;
 
-    let _telegram = Telegram::from_env().init().await.unwrap();
+    let telegram = Telegram::from_env().init().await?;
+    telegram.message("123").send().await?;
 
     Ok(())
 }

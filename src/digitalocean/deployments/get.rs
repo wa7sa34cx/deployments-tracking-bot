@@ -44,7 +44,7 @@ pub struct SummarySteps {
     pub message_base: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default)]
 pub struct Reason {
     pub code: Option<String>,
     pub message: Option<String>,
@@ -52,16 +52,18 @@ pub struct Reason {
 
 // Creates DeploymentError from Progress
 impl Progress {
-    fn create_error(&self) -> anyhow::Result<DeploymentError> {
+    fn create_error(self) -> anyhow::Result<DeploymentError> {
         let summary = self
             .summary_steps
             .ok_or_else(|| anyhow::anyhow!("summary_steps is None"))?
             .into_iter()
             .nth(0)
             .ok_or_else(|| anyhow::anyhow!("summary_steps contains no elements"))?;
+     
+        let SummarySteps { reason, message_base } = summary;
 
-        let message = summary.reason.map_or(None, |r| r.message);
-        let action = summary.message_base;
+        let message = reason.map(|r| r.message).unwrap_or(None);
+        let action = message_base;
 
         Ok(DeploymentError { message, action })
     }

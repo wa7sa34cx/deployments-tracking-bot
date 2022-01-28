@@ -33,7 +33,7 @@ impl MessageHandler {
 
         let message = SendMessage {
             chat_id: self.telegram.chat_id,
-            text: self.message,
+            text: self.message.to_owned(),
         };
 
         let json = self
@@ -48,9 +48,9 @@ impl MessageHandler {
             .await?;
 
         if !json.ok {
-            return anyhow::anyhow!(&json
+            return Err(anyhow::anyhow!(json
                 .description
-                .unwrap_or_else(|| "can't send message for unknown reason".to_string()));
+                .unwrap_or_else(|| "can't send message for unknown reason".to_string())));
         }
 
         log::debug!(
