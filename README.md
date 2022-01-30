@@ -61,6 +61,8 @@ title: "Some Title",
 type: "group",
 all_members_are_administrators: true
 },
+}
+},]}
 ...
 ```
 
