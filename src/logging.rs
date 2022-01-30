@@ -39,7 +39,7 @@ impl LoggingConfig {
     pub fn init(&self) -> Result<(), SetLoggerError> {
         let config = ConfigBuilder::new()
             .set_time_format_str(self.time_format)
-            .set_target_level(LevelFilter::Error)
+            .set_target_level(LevelFilter::Debug)
             .build();
 
         TermLogger::init(self.level, config, TerminalMode::Mixed, ColorChoice::Auto)
