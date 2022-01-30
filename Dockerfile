@@ -26,6 +26,6 @@ RUN apt-get update -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/target/release/deployments-tracking-bot deployments-tracking-bot
-COPY /app/messages messages
+COPY --from=builder /app/messages messages
 # Don't forget about environment variables!
 ENTRYPOINT ["./deployments-tracking-bot"]
