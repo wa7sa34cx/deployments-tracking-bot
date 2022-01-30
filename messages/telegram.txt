@@ -1,8 +1,0 @@
-{status}
-
-**App:** {app_name}
-**Cause:** {cause}
-**Updated at:** {updated_at}
-**Took time:** {took_time}
-
-{error_message} {error_action}

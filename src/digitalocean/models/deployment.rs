@@ -67,7 +67,7 @@ impl Deployment {
         let mut file = PathBuf::from(path);
 
         match msg_type {
-            MsgType::Telegram => file.push("telegram.txt"),
+            MsgType::Telegram => file.push("telegram.html"),
         }
 
         // Read from the file

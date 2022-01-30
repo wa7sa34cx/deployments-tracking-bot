@@ -10,6 +10,7 @@ use crate::telegram::message::MessageHandler;
 pub struct SendMessage {
     pub chat_id: i64,
     pub text: String,
+    pub parse_mode: Option<String>,
 }
 
 // https://core.telegram.org/bots/api#making-requests
@@ -34,6 +35,7 @@ impl MessageHandler {
         let message = SendMessage {
             chat_id: self.telegram.chat_id,
             text: self.message.to_owned(),
+            parse_mode: Some("HTML".to_string()),
         };
 
         let json = self
