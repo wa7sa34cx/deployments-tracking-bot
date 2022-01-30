@@ -4,7 +4,7 @@ WORKDIR /app
 
 FROM chef as planner
 COPY . .
-# Compute a lock-like file for project
+# Compute a lock-like file for the project
 RUN cargo chef prepare  --recipe-path recipe.json
 
 FROM chef as builder
@@ -12,7 +12,6 @@ COPY --from=planner /app/recipe.json recipe.json
 # Build project dependencies, not the application itself
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
-# Build the project
 RUN cargo build --release
 
 # Runtime stage

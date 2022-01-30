@@ -10,7 +10,7 @@ path = "src/lib.rs"
 
 [[bin]]
 path = "src/main.rs"
-name = "deployments_tracking_bot"
+name = "deployments-tracking-bot"
 
 [dependencies]
 tokio = { version = "1", features = [ "full" ] }
