@@ -48,7 +48,7 @@ https://api.telegram.org/bot<token>/getUpdates
 
 The API response should look something like this:
 
-```json
+```
 {
 ok: true,
 result: [
@@ -61,8 +61,6 @@ title: "Some Title",
 type: "group",
 all_members_are_administrators: true
 },
-}
-},]}
 ...
 ```
 
