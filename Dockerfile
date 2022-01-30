@@ -19,7 +19,7 @@ FROM debian:bullseye-slim AS runtime
 WORKDIR /app
 # Install OpenSSL
 RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends openssl \
+    && apt-get install -y --no-install-recommends openssl ca-certificates \
     # Clean up
     && apt-get autoremove -y \
     && apt-get clean -y \
